@@ -31,6 +31,9 @@ services:
       - redis-socketio
     networks:
       - frappe_net
+    logging:
+      driver: local
+
 
   mariadb:
     image: mariadb:11

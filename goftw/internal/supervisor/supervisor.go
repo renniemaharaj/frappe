@@ -10,7 +10,7 @@ import (
 // SetupSupervisor sets up supervisor for the bench, merges configs, and starts supervisord.
 func SetupSupervisor(benchDir string) error {
 	supervisorConf := benchDir + "/config/supervisor.conf"
-	wrapperConf := "/supervisor.conf"
+	wrapperConf := "/patches/head.patch.conf"
 
 	// Ensure log dir
 	if err := os.MkdirAll("/var/log", 0755); err != nil {
@@ -58,7 +58,7 @@ func SetupSupervisor(benchDir string) error {
 func SetupNginx(benchDir string) error {
 	nginxConf := benchDir + "/config/nginx.conf"
 	nginxConfDest := "/etc/nginx/conf.d/frappe-bench.conf"
-	mainPatch := "/main.patch.conf"
+	logPatch := "/patches/log.patch.conf"
 	globalConf := "/etc/nginx/nginx.conf"
 
 	// Remove old configs/links to force regeneration
@@ -75,7 +75,7 @@ func SetupNginx(benchDir string) error {
 	checkCmd := []string{"grep", "-q", "log_format main", globalConf}
 	if err := sudo.RunPrintIO(checkCmd...); err != nil {
 		fmt.Printf("[PATCH] Injecting main log_format into %s\n", globalConf)
-		if err := sudo.RunPrintIO("sed", "-i", "/http {/r "+mainPatch, globalConf); err != nil {
+		if err := sudo.RunPrintIO("sed", "-i", "/http {/r "+logPatch, globalConf); err != nil {
 			fmt.Printf("[ERROR] Failed to inject main.patch.conf: %v\n", err)
 			// not fatal — continue
 		}

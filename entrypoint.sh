@@ -19,7 +19,7 @@ INSTANCE_JSON_SOURCE=${INSTANCE_JSON_SOURCE:-/instance.json}
 COMMON_CONFIG_SOURCE=${COMMON_CONFIG_SOURCE:-/common_site_config.json}
 BENCH_NAME_DEFAULT=${frappe_bench:-frappe-bench}
 MERGED_SUPERVISOR_CONF="/supervisor-merged.conf"
-WRAPPER_CONF="/supervisor.conf"
+HEAD_PATCH_CONF="/patches/head.patch.conf"
 
 cd "$FRAPPE_HOME"
 

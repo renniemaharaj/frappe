@@ -11,7 +11,7 @@ func DeployThroughShell(deployMode string) {
 	os.Setenv("BENCH_DIR", environ.GetBenchPath())
 	os.Setenv("DEPLOYMENT", deployMode)
 	os.Setenv("MERGED_SUPERVISOR_CONF", "/supervisor-merged.conf")
-	os.Setenv("WRAPPER_CONF", "/supervisor.conf")
+	os.Setenv("HEAD_PATCH_CONF", "/patches/head.patch.conf")
 
 	whoami.RunPrintIO("bash", "/scripts/service.sh")
 }
