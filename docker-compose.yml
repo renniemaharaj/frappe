@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     working_dir: /home/frappe
     # command: sleep infinity # For debugging
-    # entrypoint: ["/usr/local/bin/goftw-entry"]
-    entrypoint: ["/entrypoint.sh"]
+    entrypoint: ["/usr/local/bin/goftw-entry"]
+    # entrypoint: ["/entrypoint.sh"]
     environment:
       MARIADB_HOST: mariadb
       MARIADB_PORT: 3306
@@ -20,7 +20,7 @@ services:
     restart: always
     volumes:
       - ./mount:/home/frappe
-      - ./instance.json:/home/frappe/instance.json
+      # - ./instance.json:/home/frappe/instance.json
     ports:
       - "80:80"          # Nginx
       - "8000:8000"        # Frappe web

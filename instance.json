@@ -16,6 +16,14 @@
                 "erpnext",
                 "hrms"
             ]
+        },
+        {
+            "site_name": "client3.localhost",
+            "apps": [
+                "frappe",
+                "erpnext",
+                "hrms"
+            ]
         }
     ],
     "drop_abandoned_sites": true,
