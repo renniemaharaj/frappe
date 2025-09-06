@@ -114,7 +114,7 @@ COPY --from=go-builder /goftw-entry /usr/local/bin/goftw-entry
 # ---------------------------
 # Copy instance and config files
 # ---------------------------
-COPY instance.json /instance.json
+# COPY instance.json /instance.json
 COPY common_site_config.json /common_site_config.json
 COPY /entrypoint.sh /entrypoint.sh
 COPY /scripts /scripts
@@ -123,7 +123,7 @@ COPY /patches /patches
 # COPY supervisor.conf /supervisor.conf
 # COPY nginx/main.patch.conf /main.patch.conf
 
-RUN chown frappe:frappe /instance.json /common_site_config.json /patches /scripts /entrypoint.sh \
+RUN chown frappe:frappe /common_site_config.json /patches /scripts /entrypoint.sh \
     && chmod +x /scripts/*.sh /entrypoint.sh
 
 USER frappe

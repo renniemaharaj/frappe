@@ -15,7 +15,7 @@ echo "[ENTRYPOINT] $(date '+%Y-%m-%d %H:%M:%S.%3N') PID: $$ (PPID: $PPID)"
 # Paths
 # ---------------------------
 FRAPPE_HOME=${FRAPPE_HOME:-/home/frappe}
-INSTANCE_JSON_SOURCE=${INSTANCE_JSON_SOURCE:-/instance.json}
+INSTANCE_JSON_SOURCE=${INSTANCE_JSON_SOURCE:-$FRAPPE_HOME/instance.json}
 COMMON_CONFIG_SOURCE=${COMMON_CONFIG_SOURCE:-/common_site_config.json}
 BENCH_NAME_DEFAULT=${frappe_bench:-frappe-bench}
 MERGED_SUPERVISOR_CONF="/supervisor-merged.conf"

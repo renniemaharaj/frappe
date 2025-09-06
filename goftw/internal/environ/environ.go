@@ -43,7 +43,7 @@ func GetBenchPath() string {
 // GetInstanceFile returns the path to the instance.json file, defaulting to /instance.json.
 func GetInstanceFile() string {
 	if instanceFile == "" {
-		instanceFile = "/instance.json"
+		instanceFile = GetFrappeHome() + "/" + "instance.json"
 	}
 	return instanceFile
 }
