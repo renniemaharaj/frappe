@@ -44,6 +44,11 @@ func SetupSupervisor(benchDir string) error {
 		return fmt.Errorf("failed to write temporary merged config: %v", err)
 	}
 
+	if err = SetupNginx(benchDir); err != nil {
+		fmt.Printf("[ERROR] Failed to setup nginx: %v\n", err)
+		return err
+	}
+
 	err = sudo.RunPrintIO("supervisord", "-n", "-c", tmpFile)
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to start supervisord: %v\n", err)

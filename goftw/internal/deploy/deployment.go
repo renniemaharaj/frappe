@@ -8,15 +8,15 @@ import (
 	"goftw/internal/supervisor"
 )
 
-// RunDevelopment starts the bench in development mode (bench start)
-func RunDevelopment() error {
+// DeployDevelopment starts the bench in development mode (bench start)
+func DeployDevelopment() error {
 	fmt.Println("[MODE] DEVELOPMENT")
 	err := bench.RunInBenchPrintIO("start")
 	return err
 }
 
-// RunProduction sets up supervisor and nginx for production mode
-func RunProduction() error {
+// DeployProduction sets up supervisor and nginx for production mode
+func DeployProduction() error {
 	fmt.Println("[MODE] PRODUCTION")
 	supervisor.SetupSupervisor(environ.GetBenchPath())
 	return nil
