@@ -3,17 +3,21 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"goftw/internal/bench"
 	"goftw/internal/config"
 	"goftw/internal/db"
+	"goftw/internal/deploy"
+	"goftw/internal/handlers"
 
 	"goftw/internal/environ"
 	"goftw/internal/redis"
 	"goftw/internal/sites"
 
-	internalDeploy "goftw/internal/deploy"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
@@ -98,22 +102,38 @@ func main() {
 	// ---------------------------
 	// Update bench and apps after deployment
 	// ---------------------------
-	if err := bench.UpdateApps(benchDir); err != nil {
-		fmt.Printf("[ERROR] Failed to update bench apps: %v", err)
-	}
-	sites.MigrateAll(benchDir)
+	// if err := bench.ManualUpdate(benchDir); err != nil {
+	// 	fmt.Printf("[ERROR] Failed to update bench: %v", err)
+	// }
+	// sites.MigrateAll(benchDir)
 
 	// ---------------------------
 	// Deployment
 	// ---------------------------
 	switch deployment {
 	case "production":
-		if err := internalDeploy.DeployProduction(); err != nil {
-			log.Fatalf("production mode failed: %v", err)
+		if err := deploy.DeployProductionUp(); err != nil {
+			fmt.Printf("[ERROR] Production mode failed: %v", err)
 		}
 	default:
-		if err := internalDeploy.DeployDevelopment(); err != nil {
-			log.Fatalf("development mode failed: %v", err)
+		if err := deploy.StartBench(); err != nil {
+			fmt.Printf("[ERROR] Development mode failed: %v", err)
 		}
+	}
+
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+
+	r.Route("/api/goftw", func(r chi.Router) {
+		r.Get("/sites", handlers.ListSitesHandler)
+		r.Get("/apps", handlers.ListAppsHandler)
+		r.Get("/site/{name}", handlers.GetSitesHandler)
+		r.Put("/site/{name}", handlers.PutSitesHandler)
+	})
+
+	fmt.Printf("[SERVER] Server running on :3000")
+	err = http.ListenAndServe(":3000", r)
+	if err != nil {
+		fmt.Printf("[ERROR] Could not start server %v", err)
 	}
 }

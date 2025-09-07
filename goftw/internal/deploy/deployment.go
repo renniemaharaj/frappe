@@ -1,23 +1,58 @@
-package deployment
+package deploy
 
 import (
 	"fmt"
+	"os"
 
-	"goftw/internal/bench"
 	"goftw/internal/environ"
-	"goftw/internal/supervisor"
+	"goftw/internal/whoami"
 )
 
-// DeployDevelopment starts the bench in development mode (bench start)
-func DeployDevelopment() error {
-	fmt.Println("[MODE] DEVELOPMENT")
-	err := bench.RunInBenchPrintIO("start")
-	return err
+var (
+	unmannedDeployment bool
+)
+
+// DeployThroughShell runs the /scripts/service.sh directly.
+// This is "unmanned" mode where Go should not attempt to control WSGI state.
+func DeployThroughShell(deployMode string) {
+	unmannedDeployment = true
+	os.Setenv("BENCH_DIR", environ.GetBenchPath())
+	os.Setenv("DEPLOYMENT", deployMode)
+	os.Setenv("MERGED_SUPERVISOR_CONF", "/supervisor-merged.conf")
+	os.Setenv("HEAD_PATCH_CONF", "/patches/head.patch.conf")
+
+	whoami.RunPrintIO("bash", "/scripts/service.sh")
 }
 
-// DeployProduction sets up supervisor and nginx for production mode
-func DeployProduction() error {
-	fmt.Println("[MODE] PRODUCTION")
-	supervisor.SetupSupervisor(environ.GetBenchPath())
-	return nil
+// RestartDeployment restarts either production or development WSGI depending on state.
+func RestartDeployment() error {
+	if unmannedDeployment {
+		return fmt.Errorf("cannot restart WSGI: unmanaged shell deployment active")
+	}
+
+	if productionCMD != nil {
+		// Hard restart supervisor + nginx
+		if err := DeployProductionDown(); err != nil {
+			fmt.Printf("[ERROR] Could not stop production: %v", err)
+		}
+		if err := StartProductionWSGI(environ.GetBenchPath()); err != nil {
+			return fmt.Errorf("failed to start production WSGI: %v", err)
+		}
+		fmt.Println("[WSGI] Production WSGI restarted (hard)")
+		return nil
+	}
+
+	if developmentCMD != nil {
+		// Hard restart bench start
+		if err := StopBench(); err != nil {
+			return fmt.Errorf("failed to stop development WSGI: %v", err)
+		}
+		if err := StartBench(); err != nil {
+			return fmt.Errorf("failed to start development WSGI: %v", err)
+		}
+		fmt.Println("[WSGI] Development WSGI restarted (hard)")
+		return nil
+	}
+
+	return fmt.Errorf("unknown WSGI state: neither production nor development flagged")
 }

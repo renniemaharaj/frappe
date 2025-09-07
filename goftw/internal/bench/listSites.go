@@ -17,7 +17,6 @@ var (
 // skipping entries from skipSiteDirs.
 func ListSites(benchDir string) ([]string, error) {
 	var currentSites []string
-
 	siteDirs, err := filepath.Glob(filepath.Join(benchDir, "sites", "*"))
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to glob site directories: %v\n", err)
@@ -29,12 +28,10 @@ func ListSites(benchDir string) ([]string, error) {
 		if err != nil || !info.IsDir() {
 			continue
 		}
-
 		dirName := filepath.Base(d)
 		if _, ok := skipSiteDirs[dirName]; ok {
 			continue
 		}
-
 		// Check for site_config.json to confirm it's a valid site
 		if _, err := os.Stat(filepath.Join(d, "site_config.json")); err == nil {
 			currentSites = append(currentSites, dirName)

@@ -17,6 +17,7 @@ services:
       MARIADB_USER: frappe
       MARIADB_PASSWORD: frappe
       MARIADB_DATABASE: frappe
+      # PIP_BREAK_SYSTEM_PACKAGES: 1
     restart: always
     volumes:
       - ./mount:/home/frappe
@@ -25,6 +26,7 @@ services:
       - "80:80"          # Nginx
       - "8000:8000"        # Frappe web
       - "9000:9000"        # Socket.IO port (matches common_site_config.json)
+      - "3000:3000"
     depends_on:
       - mariadb
       - redis-cache

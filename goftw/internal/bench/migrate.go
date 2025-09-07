@@ -1,19 +1,18 @@
-package sites
+package bench
 
 import (
 	"fmt"
-	"goftw/internal/bench"
 )
 
 // Migrate runs bench Migrate
 func Migrate(site string) error {
 	fmt.Printf("[SITES] Migrating site: %s\n", site)
-	return ShortHandRunOnSite(site, "migrate")
+	return RunInBenchPrintIO("--site", site, "migrate")
 }
 
-// MigrateAll runs migrate for all provided sites
-func MigrateAll(benchDir string) error {
-	sites, err := bench.ListSites(benchDir)
+// MigrateSites runs migrate for all provided sites
+func MigrateSites(benchDir string) error {
+	sites, err := ListSites(benchDir)
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to list current sites for migration: %v\n", err)
 		return err

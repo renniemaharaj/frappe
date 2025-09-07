@@ -41,6 +41,7 @@ func Initialize(benchName, frappeBranch string) error {
 	return nil
 }
 
+// Copy common_sites_config into bench
 func CopyCommonSitesConfig(benchDir, configPath string) error {
 	dest := fmt.Sprintf("%s/sites", benchDir)
 	if err := sudo.RunPrintIO("cp", configPath, dest); err != nil {
