@@ -97,21 +97,12 @@ The entrypoint (Go or shell) handles site management automatically:
   "redis_queue": "redis://redis-queue:6379",
   "redis_socketio": "redis://redis-socketio:6379",
   "redis_socketio_channel": "redis_socketio",
-  "socketio_port": 9000,
-  "developer_mode": 1,
-  "backup_limit": 5,
-  "file_watcher_port": 6787,
-  "frappe_user": "frappe",
-  "email_sender": "no-reply@example.com",
-  "realtime_enabled": true,
-  "max_workers": 4,
-  "max_celery_workers": 8,
-  "worker_timeout": 300,
-  "log_level": "INFO",
-  "auto_email_id": "admin@example.com",
-  "max_file_size": 52428800,
-  "allow_guests": false
+  "restart_supervisor_on_update": false,
+  "restart_systemd_on_update": false,
+  "dns_multitenant": true,
+  "socketio_port": 9000
 }
+
 ```
 
 ## Docker Compose Environment Variables (MariaDB)

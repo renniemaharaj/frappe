@@ -85,7 +85,7 @@ func main() {
 			os.Exit(1)
 		}
 		log.Printf("bench test command succeeded")
-		bench.CopyCommonSitesConfig(benchDir, environ.GetCommonSitesConfigPath())
+		// bench.CopyCommonSitesConfig(benchDir, environ.GetCommonSitesConfigPath())
 	}
 
 	// ---------------------------

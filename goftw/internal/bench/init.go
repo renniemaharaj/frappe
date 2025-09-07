@@ -35,6 +35,8 @@ func Initialize(benchName, frappeBranch string) error {
 	if err := whoami.RunPrintIO("sh", "-c", cmd); err != nil {
 		return fmt.Errorf("[ERROR] Bench initialization failed: %w", err)
 	}
+
+	CopyCommonSitesConfig(benchPath, environ.GetCommonSitesConfigPath())
 	fmt.Printf("[INFO] Bench '%s' initialized successfully\n", benchName)
 	return nil
 }
