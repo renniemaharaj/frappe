@@ -31,14 +31,12 @@ func main() {
 	instanceCfx, err := entity.LoadInstance(environ.GetInstanceFile())
 	if err != nil {
 		log.Fatalf("failed to load instance.json: %v", err)
-		os.Exit(1)
 	}
 
 	// Load common_site_config.json
 	commonCfg, err := entity.LoadCommonSitesConfig(environ.GetCommonSitesConfigPath())
 	if err != nil {
 		log.Fatalf("failed to load common_site_config.json: %v", err)
-		os.Exit(1)
 	}
 	deployment := instanceCfx.Deployment
 
@@ -66,18 +64,17 @@ func main() {
 	}
 
 	if _, err := os.Stat(bench.Path); os.IsNotExist(err) {
-		log.Printf("bench directory %s does not exist, initializing...", bench.Path)
+		log.Printf("[BENCH] Bench directory %s does not exist, initializing...", bench.Path)
 		if err := bench.Initialize(bench.Branch); err != nil {
 			log.Fatalf("bench init failed: %v", err)
 		}
 	} else {
-		log.Printf("bench directory %s exists, running test ...", bench.Path)
+		log.Printf("[BENCH] Bench directory %s exists, running test ...", bench.Path)
 		_, err := bench.ExecRunInBenchSwallowIO("bench", "find", ".")
 		if err != nil {
-			log.Fatalf("bench test command failed: %v", err)
-			os.Exit(1)
+			log.Fatalf("[ERROR] Bench test failed: %v", err)
 		}
-		log.Printf("bench test command succeeded")
+		log.Printf("[BENCH] Bench test succeeded")
 	}
 	// Checkout sites for anomalies and missing sites
 	if err := bench.CheckoutSites(instanceCfx, dbCfg.User, dbCfg.Password); err != nil {
@@ -92,7 +89,7 @@ func main() {
 	// Deployment
 	switch deployment {
 	case "production":
-		if err := bench.TerminateSupervisorNginx(); err != nil {
+		if err := bench.RunSupervisorNginx(); err != nil {
 			fmt.Printf("[ERROR] Production mode failed: %v", err)
 		}
 	default:

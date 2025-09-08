@@ -37,7 +37,6 @@ func (b *Bench) ListApps() ([]string, error) {
 
 // ListApps runs `bench --site <site> list-apps` and parses the result into []AppInfo.
 func (b *Bench) ListAppsOnSite(siteName string) ([]entity.App, error) {
-	fmt.Printf("[BENCH] Listing apps for site: %s\n", siteName)
 	out, err := b.ExecRunInBenchSwallowIO("bench", "--site", siteName, "list-apps")
 	if err != nil {
 		fmt.Printf("[ERROR] bench list-apps failed: %v, output: %s\n", err, out)
