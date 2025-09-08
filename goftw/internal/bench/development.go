@@ -1,9 +1,7 @@
-package deploy
+package bench
 
 import (
 	"fmt"
-	"goftw/internal/environ"
-	"os"
 	"os/exec"
 	"syscall"
 )
@@ -13,7 +11,7 @@ var (
 )
 
 // StartBench starts the bench in development mode (`bench start`) without blocking.
-func StartBench() error {
+func (b *Bench) StartBench() error {
 	if unmannedDeployment {
 		return fmt.Errorf("cannot start development WSGI: unmanaged shell deployment active")
 	}
@@ -21,30 +19,23 @@ func StartBench() error {
 		fmt.Printf("[ERROR] Development process already running")
 	}
 	fmt.Printf("[MODE] DEVELOPMENT\n")
-	benchDir := environ.GetBenchPath()
+	// benchDir := environ.GetBenchPath()
 
-	cmd := exec.Command("bench", "start")
-	cmd.Dir = benchDir
-	cmd.Env = os.Environ()
-
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
+	developmentCMD, err := b.ExecStartInBenchPrintIO("bench", "start")
 	// Start without waiting (non-blocking)
-	if err := cmd.Start(); err != nil {
+	if err != nil {
 		return fmt.Errorf("failed to start bench: %v", err)
 	}
 
-	developmentCMD = cmd
-	fmt.Printf("[DEV] Bench started (PID: %d)\n", cmd.Process.Pid)
+	fmt.Printf("[DEV] Bench started (PID: %d)\n", developmentCMD.Process.Pid)
 
 	return nil
 }
 
 // StopBench stops the bench process if running.
-func StopBench() error {
+func (b *Bench) StopBench() error {
 	if developmentCMD == nil {
-		fmt.Printf("[ERROR] Development process not running")
+		return fmt.Errorf("cannot stop development WSGI: unmanaged shell deployment active")
 	}
 	if developmentCMD != nil && developmentCMD.Process != nil {
 		if err := productionCMD.Process.Signal(syscall.SIGTERM); err != nil {

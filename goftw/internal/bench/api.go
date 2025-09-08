@@ -1,25 +1,34 @@
-package handlers
+package bench
 
 import (
 	"encoding/json"
 	"fmt"
+
+	// "goftw/internal/deploy"
+	"goftw/internal/environ"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-
-	"goftw/internal/bench"
-	"goftw/internal/deploy"
-	"goftw/internal/environ"
-	internalSites "goftw/internal/sites"
 )
 
+// Response helpers
+func writeJSON(w http.ResponseWriter, status int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(data)
+}
+
+func writeError(w http.ResponseWriter, status int, msg string) {
+	writeJSON(w, status, map[string]string{"error": msg})
+}
+
 // ListSitesHandler lists all sites
-func ListSitesHandler(w http.ResponseWriter, r *http.Request) {
+func (b *Bench) ListSitesHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("[API] ListSitesHandler called")
 	benchDir := environ.GetBenchPath()
 	fmt.Printf("[API] Bench directory: %s\n", benchDir)
 
-	sites, err := bench.ListSites(benchDir)
+	sites, err := b.ListSites()
 	if err != nil {
 		writeError(w, 500, fmt.Sprintf("failed to list sites: %v", err))
 		return
@@ -30,12 +39,12 @@ func ListSitesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // ListAppsHandler lists all apps in the bench
-func ListAppsHandler(w http.ResponseWriter, r *http.Request) {
+func (b *Bench) ListAppsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("[API] ListAppsHandler called")
 	benchDir := environ.GetBenchPath()
 	fmt.Printf("[API] Bench directory: %s\n", benchDir)
 
-	apps, err := bench.ListApps(benchDir)
+	apps, err := b.ListApps()
 	if err != nil {
 		writeError(w, 500, fmt.Sprintf("failed to list apps: %v", err))
 		return
@@ -46,14 +55,13 @@ func ListAppsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetSitesHandler returns a single site and its apps
-func GetSitesHandler(w http.ResponseWriter, r *http.Request) {
-	benchDir := environ.GetBenchPath()
+func (b *Bench) GetSitesHandler(w http.ResponseWriter, r *http.Request) {
 	siteName := chi.URLParam(r, "name")
 	fmt.Printf("[API] GetSitesHandler called for site: %s\n", siteName)
 
 	// Verify site exists
 	fmt.Println("[API] Verifying site existence...")
-	sites, _ := bench.ListSites(benchDir)
+	sites, _ := b.ListSites()
 	found := false
 	for _, s := range sites {
 		if s == siteName {
@@ -69,7 +77,7 @@ func GetSitesHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Get installed apps for this site
 	fmt.Printf("[API] Retrieving apps for site %s...\n", siteName)
-	apps, err := internalSites.ListApps(siteName)
+	apps, err := b.ListAppsOnSite(siteName)
 	if err != nil {
 		writeError(w, 500, fmt.Sprintf("failed to get site apps: %v", err))
 		return
@@ -85,7 +93,7 @@ func GetSitesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // PutSitesHandler creates a new site and installs apps
-func PutSitesHandler(w http.ResponseWriter, r *http.Request) {
+func (b *Bench) PutSitesHandler(w http.ResponseWriter, r *http.Request) {
 	siteName := chi.URLParam(r, "name")
 	fmt.Printf("[API] PutSitesHandler called for site: %s\n", siteName)
 
@@ -101,7 +109,7 @@ func PutSitesHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Create site
 	fmt.Printf("[API] Creating site %s...\n", siteName)
-	if err := internalSites.New(siteName, "root", "root"); err != nil {
+	if err := b.NewSite(siteName, "root", "root"); err != nil {
 		writeError(w, 500, fmt.Sprintf("failed to create site: %v", err))
 		return
 	}
@@ -110,7 +118,7 @@ func PutSitesHandler(w http.ResponseWriter, r *http.Request) {
 	// Apply apps
 	for _, app := range body.Apps {
 		fmt.Printf("[API] Installing app %s on site %s...\n", app, siteName)
-		if err := internalSites.InstallApp(siteName, app); err != nil {
+		if err := b.InstallApp(siteName, app); err != nil {
 			writeError(w, 500, fmt.Sprintf("failed to install app %s: %v", app, err))
 			return
 		}
@@ -119,7 +127,7 @@ func PutSitesHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Restart deployment
 	fmt.Println("[API] Restarting deployment services...")
-	if err := deploy.RestartDeployment(); err != nil {
+	if err := b.RestartDeployment(); err != nil {
 		fmt.Printf("[ERROR] Deployment restart failed: %v\n", err)
 	}
 

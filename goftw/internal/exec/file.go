@@ -1,4 +1,4 @@
-package sudo
+package exec
 
 import (
 	"bytes"

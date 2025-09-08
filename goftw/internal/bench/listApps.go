@@ -2,15 +2,18 @@ package bench
 
 import (
 	"fmt"
-	"goftw/internal/sudo"
+	"goftw/internal/entity"
+	"goftw/internal/exec"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 )
 
 // ListApps returns all directories in benchDir/apps that are valid git repositories.
-func ListApps(benchDir string) ([]string, error) {
+func (b *Bench) ListApps() ([]string, error) {
 	var apps []string
-	appDirs, err := filepath.Glob(filepath.Join(benchDir, "apps", "*"))
+	appDirs, err := filepath.Glob(filepath.Join(b.Path, "apps", "*"))
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to glob app directories: %v\n", err)
 		return nil, err
@@ -23,11 +26,54 @@ func ListApps(benchDir string) ([]string, error) {
 		}
 
 		// Check if directory is a git repository
-		if err := sudo.RunPrintIO("git", "-C", d, "status"); err != nil {
+		if err := exec.ExecRunPrintIO("git", "-C", d, "status"); err != nil {
 			fmt.Printf("[WARN] Skipping %s: git status failed\n", d)
 			continue
 		}
 		apps = append(apps, filepath.Base(d))
 	}
+	return apps, nil
+}
+
+// ListApps runs `bench --site <site> list-apps` and parses the result into []AppInfo.
+func (b *Bench) ListAppsOnSite(siteName string) ([]entity.App, error) {
+	fmt.Printf("[BENCH] Listing apps for site: %s\n", siteName)
+	out, err := b.ExecRunInBenchSwallowIO("bench", "--site", siteName, "list-apps")
+	if err != nil {
+		fmt.Printf("[ERROR] bench list-apps failed: %v, output: %s\n", err, out)
+		return nil, err
+	}
+
+	lines := strings.Split(string(out), "\n")
+	apps := make([]entity.App, 0)
+
+	// Regex for full format: name <version> (<commit>) [branch]
+	reFull := regexp.MustCompile(`^(\w+)\s+([\w\.\-]+)?\s*(?:\(([\da-f]+)\))?\s*(?:\[(.+)\])?$`)
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+
+		match := reFull.FindStringSubmatch(line)
+		if match != nil {
+			apps = append(apps, entity.App{
+				Name:    match[1],
+				Version: match[2],
+				Commit:  match[3],
+				Branch:  match[4],
+				Raw:     line,
+			})
+			continue
+		}
+
+		// Fallback: just the name
+		apps = append(apps, entity.App{
+			Name: strings.Fields(line)[0],
+			Raw:  line,
+		})
+	}
+
 	return apps, nil
 }

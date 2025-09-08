@@ -3,39 +3,37 @@ package bench
 import (
 	"fmt"
 	"os"
-
-	"goftw/internal/sudo"
 )
 
 // ManualUpdate runs all safe update steps in sequence.
-func ManualUpdate(benchDir string) error {
+func (b *Bench) ManualUpdate() error {
 	// STEP 1: Update Apps
 	fmt.Println("[APPS] Upgrading installed apps")
-	if err := GitPullOnApps(benchDir); err != nil {
+	if err := b.GitPullOnApps(); err != nil {
 		fmt.Printf("[ERROR] Failed to list apps for update: %v\n", err)
 		return err
 	}
 	// STEP 2: Python deps
 	fmt.Println("[PYTHON] Upgrading pip and Python packages inside bench env...")
-	if err := UpdatePython(benchDir); err != nil {
+	if err := b.UpdatePython(); err != nil {
 		fmt.Printf("[ERROR] Failed to update python: %v\n", err)
 		return err
 	}
 	// STEP 3: Node/Yarn deps
 	fmt.Println("[NODE] Installing/building frontend dependencies...")
-	if err := RunYarnInstallBuild(benchDir); err != nil {
+	if err := b.RunYarnInstallBuild(); err != nil {
 		fmt.Printf("[ERROR] Failed to update node: %v\n", err)
 		return err
 	}
 	// STEP 4: Migrate/patches
 	fmt.Println("[MIGRATE] Running database migrations & patches...")
-	if err := MigrateSites(benchDir); err != nil {
+	if err := b.MigrateSites(); err != nil {
 		fmt.Printf("[ERROR] Failed to migrate sites: %v\n", err)
 		return err
 	}
 	// STEP 5: Build assets
 	fmt.Println("[BUILD] Rebuilding static assets...")
-	if err := BuildAssets(benchDir); err != nil {
+	if err := b.BuildAssets(); err != nil {
 		fmt.Printf("[ERROR] Failed to build assets: %v\n", err)
 		return err
 	}
@@ -45,19 +43,19 @@ func ManualUpdate(benchDir string) error {
 }
 
 // Updates every installed apps by pulling new commits
-func GitPullOnApps(benchDir string) error {
-	appNames, err := ListApps(benchDir)
+func (b *Bench) GitPullOnApps() error {
+	appNames, err := b.ListApps()
 	if err != nil {
 		return err
 	}
 	for _, app := range appNames {
-		appPath := benchDir + "/apps/" + app
+		appPath := b.Path + "/apps/" + app
 		if _, err := os.Stat(appPath); os.IsNotExist(err) {
 			fmt.Printf("[APPS] Missing app: %s\n", app)
 			continue
 		}
 		fmt.Printf("[APPS] Pulling latest for: %s\n", app)
-		if err := sudo.RunInBenchPrintIO("git", "-C", appPath, "pull"); err != nil {
+		if err := b.ExecRunInBenchPrintIO("git", "-C", appPath, "pull"); err != nil {
 			fmt.Printf("[ERROR] Failed to update app %s: %v\n", app, err)
 			return err
 		}
@@ -66,28 +64,28 @@ func GitPullOnApps(benchDir string) error {
 }
 
 // Upgrades python virtual environment requirements
-func UpdatePython(benchDir string) error {
-	venvPip := fmt.Sprintf("%s/env/bin/pip", benchDir)
-	if err := sudo.RunInBenchPrintIO(venvPip, "install", "--upgrade", "pip", "setuptools", "wheel"); err != nil {
+func (b *Bench) UpdatePython() error {
+	venvPip := fmt.Sprintf("%s/env/bin/pip", b.Path)
+	if err := b.ExecRunInBenchPrintIO("sudo", venvPip, "install", "--upgrade", "pip", "setuptools", "wheel"); err != nil {
 		return fmt.Errorf("[PYTHON] Failed to upgrade pip/setuptools/wheel: %v", err)
 	}
 	// And, install/upgrade frappe-bench or other global bench packages inside env
-	if err := sudo.RunInBenchPrintIO(venvPip, "install", "--upgrade", "frappe-bench", "gunicorn"); err != nil {
+	if err := b.ExecRunInBenchPrintIO("sudo", venvPip, "install", "--upgrade", "frappe-bench", "gunicorn"); err != nil {
 		return fmt.Errorf("[PYTHON] Failed to upgrade frappe-bench/gunicorn: %v", err)
 	}
 	return nil
 }
 
 // Update yarn dependencies and builds
-func RunYarnInstallBuild(benchDir string) error {
-	frappePath := benchDir + "/apps/frappe"
-	if err := sudo.RunInBenchPrintIO("yarn", "--cwd", frappePath, "install"); err != nil {
+func (b *Bench) RunYarnInstallBuild() error {
+	frappePath := b.Path + "/apps/frappe"
+	if err := b.ExecRunInBenchPrintIO("sudo", "yarn", "--cwd", frappePath, "install"); err != nil {
 		return err
 	}
-	return sudo.RunInBenchPrintIO("yarn", "--cwd", frappePath, "build")
+	return b.ExecRunInBenchPrintIO("sudo", "yarn", "--cwd", frappePath, "build")
 }
 
 // Run bench build
-func BuildAssets(benchDir string) error {
-	return RunInBenchPrintIO("build")
+func (b *Bench) BuildAssets() error {
+	return b.ExecRunInBenchPrintIO("bench", "build")
 }

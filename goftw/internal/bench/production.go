@@ -1,38 +1,50 @@
-package deploy
+package bench
 
 import (
 	"fmt"
-	"goftw/internal/bench"
-	"goftw/internal/environ"
-	"goftw/internal/sudo"
 	"os"
 	"os/exec"
 	"syscall"
+
+	internalExec "goftw/internal/exec"
 )
 
 var (
 	productionCMD *exec.Cmd
 )
 
-// DeployProductionUp sets up supervisor + nginx and starts production WSGI.
-func DeployProductionUp() error {
-	if productionCMD != nil {
-		return fmt.Errorf("cannot start production WSGI: already running")
-	}
+// RunSupervisorNginx sets up supervisor for the bench, merges configs, and starts supervisord.
+func (b *Bench) RunSupervisorNginx() error {
 	if unmannedDeployment {
-		return fmt.Errorf("cannot start production WSGI: unmanaged shell deployment active")
+		return fmt.Errorf("cannot run production WSGI: unmanaged shell deployment active")
 	}
-
-	fmt.Printf("[MODE] PRODUCTION\n")
-	if err := StartProductionWSGI(environ.GetBenchPath()); err != nil {
+	// Configure nginx
+	if err := b.configurePatchNginx(b); err != nil {
+		fmt.Printf("[ERROR] Failed to setup nginx: %v\n", err)
 		return err
 	}
 
+	// Configure supervisor
+	tmpFile, err := b.configurePatchSupervisor(b)
+	if err != nil {
+		fmt.Printf("[ERROR] Failed configure and patch supervisor: %v\n", err)
+		return err
+	}
+
+	productionCMD, err = internalExec.ExecStartPrintIO("sudo", "supervisord", "-c", tmpFile)
+	// Start without waiting
+	if err != nil {
+		fmt.Printf("[ERROR] Failed to start supervisord: %v\n", err)
+		return err
+	}
+
+	// Supervisord is running in the background now
+	fmt.Printf("[WSGI] Production WSGI started (PID: %d).\n", productionCMD.Process.Pid)
 	return nil
 }
 
-// DeployProductionDown stops production services (supervisord + nginx).
-func DeployProductionDown() error {
+// TerminateSupervisorNginx stops production services (supervisord + nginx).
+func (b *Bench) TerminateSupervisorNginx() error {
 	if productionCMD == nil || productionCMD.Process == nil {
 		return fmt.Errorf("production WSGI not running")
 	}
@@ -50,48 +62,9 @@ func DeployProductionDown() error {
 	return nil
 }
 
-// StartProductionWSGI sets up supervisor for the bench, merges configs, and starts supervisord.
-func StartProductionWSGI(benchDir string) error {
-	// Configure nginx
-	if err := configurePatchNginx(benchDir); err != nil {
-		fmt.Printf("[ERROR] Failed to setup nginx: %v\n", err)
-		return err
-	}
-
-	// Configure supervisor
-	tmpFile, err := configurePatchSupervisor(benchDir)
-	if err != nil {
-		fmt.Printf("[ERROR] Failed configure and patch supervisor: %v\n", err)
-		return err
-	}
-
-	// Build the command
-	cmd := exec.Command("sudo", "supervisord", "-c", tmpFile)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	productionCMD = cmd
-	// Start without waiting
-	if err := cmd.Start(); err != nil {
-		fmt.Printf("[ERROR] Failed to start supervisord: %v\n", err)
-		return err
-	}
-
-	// Supervisord is running in the background now
-	fmt.Printf("[WSGI] Production WSGI started (PID: %d).\n", cmd.Process.Pid)
-	return nil
-}
-
-// func StopProductionWSGI() error {
-// 	if err := sudo.RunPrintIO("sudo", "supervisorctl", "stop", "all"); err != nil {
-// 		return fmt.Errorf("failed to stop production WSGI: %v", err)
-// 	}
-// 	fmt.Println("[WSGI] Production WSGI stopped")
-// 	return nil
-// }
-
 // configurePatchSupervisor runs supervisor setup, patches it and returns conf or error
-func configurePatchSupervisor(benchDir string) (string, error) {
-	supervisorConf := benchDir + "/config/supervisor.conf"
+func (b *Bench) configurePatchSupervisor(bench *Bench) (string, error) {
+	supervisorConf := bench.Path + "/config/supervisor.conf"
 	wrapperConf := "/patches/head.patch.conf"
 
 	// Ensure log dir
@@ -101,20 +74,20 @@ func configurePatchSupervisor(benchDir string) (string, error) {
 	}
 
 	// Remove old config to force regeneration
-	_ = sudo.RemoveFile(supervisorConf)
+	_ = internalExec.RemoveFile(supervisorConf)
 
-	if err := bench.RunInBenchPrintIO("setup", "supervisor", "--skip-redis"); err != nil {
+	if err := bench.ExecRunInBenchPrintIO("bench", "setup", "supervisor", "--skip-redis"); err != nil {
 		fmt.Printf("[ERROR] Failed to setup supervisor: %v\n", err)
 		return "", fmt.Errorf("failed to setup supervisor: %v", err)
 	}
 
 	// Merge configs
-	wrapper, err := sudo.ReadFile(wrapperConf)
+	wrapper, err := internalExec.ReadFile(wrapperConf)
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to read supervisor wrapper config: %v\n", err)
 		return "", err
 	}
-	benchConf, err := sudo.ReadFile(supervisorConf)
+	benchConf, err := internalExec.ReadFile(supervisorConf)
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to read supervisor config: %v\n", err)
 		return "", err
@@ -129,34 +102,34 @@ func configurePatchSupervisor(benchDir string) (string, error) {
 }
 
 // configurePatchNginx sets up nginx using bench and symlinks the config.
-func configurePatchNginx(benchDir string) error {
-	nginxConf := benchDir + "/config/nginx.conf"
+func (b *Bench) configurePatchNginx(bench *Bench) error {
+	nginxConf := bench.Path + "/config/nginx.conf"
 	nginxConfDest := "/etc/nginx/conf.d/frappe-bench.conf"
 	logPatch := "/patches/log.patch.conf"
 	globalConf := "/etc/nginx/nginx.conf"
 
 	// Remove old configs/links to force regeneration
-	_ = sudo.RemoveFile(nginxConf)
-	_ = sudo.RemoveFile(nginxConfDest)
+	_ = internalExec.RemoveFile(nginxConf)
+	_ = internalExec.RemoveFile(nginxConfDest)
 
 	// Generate nginx config
-	if err := bench.RunInBenchPrintIO("setup", "nginx"); err != nil {
+	if err := bench.ExecRunInBenchPrintIO("bench", "setup", "nginx"); err != nil {
 		fmt.Printf("[ERROR] Failed to setup nginx: %v\n", err)
 		return fmt.Errorf("failed to setup nginx: %v", err)
 	}
 
 	// Inject patch into global nginx.conf if not already present
 	checkCmd := []string{"grep", "-q", "log_format main", globalConf}
-	if err := sudo.RunPrintIO(checkCmd...); err != nil {
+	if err := internalExec.ExecRunPrintIO(checkCmd...); err != nil {
 		fmt.Printf("[PATCH] Injecting main log_format into %s\n", globalConf)
-		if err := sudo.RunPrintIO("sed", "-i", "/http {/r "+logPatch, globalConf); err != nil {
+		if err := internalExec.ExecRunPrintIO("sudo", "sed", "-i", "/http {/r "+logPatch, globalConf); err != nil {
 			fmt.Printf("[ERROR] Failed to inject main.patch.conf: %v\n", err)
 			// not fatal — continue
 		}
 	}
 
 	// Symlink bench-generated config
-	err := sudo.RunPrintIO("ln", "-sf", nginxConf, nginxConfDest)
+	err := internalExec.ExecRunPrintIO("sudo", "ln", "-sf", nginxConf, nginxConfDest)
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to symlink nginx config: %v\n", err)
 		return err

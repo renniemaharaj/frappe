@@ -15,9 +15,9 @@ var (
 
 // ListSites returns all valid site directories in benchDir/sites,
 // skipping entries from skipSiteDirs.
-func ListSites(benchDir string) ([]string, error) {
+func (b *Bench) ListSites() ([]string, error) {
 	var currentSites []string
-	siteDirs, err := filepath.Glob(filepath.Join(benchDir, "sites", "*"))
+	siteDirs, err := filepath.Glob(filepath.Join(b.Path, "sites", "*"))
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to glob site directories: %v\n", err)
 		return nil, err
