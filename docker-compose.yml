@@ -6,7 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     working_dir: /home/frappe
-    # command: sleep infinity # For debugging
     entrypoint: ["/usr/local/bin/goftw-entry"]
     # entrypoint: ["/entrypoint.sh"]
     environment:
@@ -17,11 +16,9 @@ services:
       MARIADB_USER: frappe
       MARIADB_PASSWORD: frappe
       MARIADB_DATABASE: frappe
-      # PIP_BREAK_SYSTEM_PACKAGES: 1
     restart: always
     volumes:
       - ./mount:/home/frappe
-      # - ./instance.json:/home/frappe/instance.json
     ports:
       - "80:80"          # Nginx
       - "8000:8000"        # Frappe web
@@ -80,20 +77,6 @@ services:
       - ./redis-socketio:/data
     networks:
       - frappe_net
-
-  # nginx:
-  #   build:
-  #     context: ./nginx
-  #   restart: always
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - frappe
-  #   networks:
-  #     - frappe_net
-  #   environment:
-  #     - BACKEND=frappe:8000
-  #     - SOCKETIO=frappe:9000
 
 networks:
   frappe_net:
