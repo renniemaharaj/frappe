@@ -3,7 +3,7 @@ package bench
 import (
 	"fmt"
 	"goftw/internal/entity"
-	"goftw/internal/exec"
+	"goftw/internal/fns"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -26,7 +26,7 @@ func (b *Bench) ListApps() ([]string, error) {
 		}
 
 		// Check if directory is a git repository
-		if err := exec.ExecRunPrintIO("git", "-C", d, "status"); err != nil {
+		if err := fns.ExecRunPrintIO("git", "-C", d, "status"); err != nil {
 			fmt.Printf("[WARN] Skipping %s: git status failed\n", d)
 			continue
 		}

@@ -3,12 +3,17 @@ package bench
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	// "goftw/internal/deploy"
 	"goftw/internal/environ"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+)
+
+var (
+	siteExtension = ".localhost"
 )
 
 // Response helpers
@@ -92,10 +97,22 @@ func (b *Bench) GetSitesHandler(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, resp)
 }
 
+func normalizeSiteName(siteName string) string {
+	if i := strings.LastIndex(siteName, "."); i != -1 {
+		siteName = siteName[:i]
+	}
+	return siteName + siteExtension
+}
+
 // PutSitesHandler creates a new site and installs apps
 func (b *Bench) PutSitesHandler(w http.ResponseWriter, r *http.Request) {
 	siteName := chi.URLParam(r, "name")
 	fmt.Printf("[API] PutSitesHandler called for site: %s\n", siteName)
+	if siteName == "" {
+		writeError(w, 400, "no site name")
+		return
+	}
+	siteName = normalizeSiteName(siteName)
 
 	// Parse body for apps list
 	var body struct {
@@ -110,6 +127,7 @@ func (b *Bench) PutSitesHandler(w http.ResponseWriter, r *http.Request) {
 	// Create site
 	fmt.Printf("[API] Creating site %s...\n", siteName)
 	if err := b.NewSite(siteName, "root", "root"); err != nil {
+		fmt.Printf("[ERROR] Could not create new site: %s %v", siteName, err)
 		writeError(w, 500, fmt.Sprintf("failed to create site: %v", err))
 		return
 	}
@@ -119,7 +137,9 @@ func (b *Bench) PutSitesHandler(w http.ResponseWriter, r *http.Request) {
 	for _, app := range body.Apps {
 		fmt.Printf("[API] Installing app %s on site %s...\n", app, siteName)
 		if err := b.InstallApp(siteName, app); err != nil {
+			fmt.Printf("[API] Fail to install app:%s on site: %s %v", app, siteName, err)
 			writeError(w, 500, fmt.Sprintf("failed to install app %s: %v", app, err))
+			b.DropSite(siteName, "root", "root")
 			return
 		}
 		fmt.Printf("[API] App %s installed successfully\n", app)

@@ -3,15 +3,37 @@ package bench
 import (
 	"fmt"
 	"goftw/internal/entity"
+	"goftw/internal/fns"
 	"goftw/internal/utils"
 	"os"
 	"path/filepath"
 )
 
-// GetApp fetches an app from branch
-func (b *Bench) GetApp(app, branch string) error {
-	_, err := b.ExecRunInBenchSwallowIO("bench", "get-app", "--branch", branch, app)
-	return err
+// GetApp fetches an app from branch, auto-healing if a previous fetch was incomplete
+func (b *Bench) GetApp(app string) error {
+	// First attempt: try to get by name directly
+	if err := b.ExecRunInBenchPrintIO("bench", "get-app", "--branch", b.Branch, app); err == nil {
+		return nil
+	}
+
+	// If failed, clean up any existing incomplete app dir
+	appPath := filepath.Join(b.Path, "apps", app)
+	if _, statErr := os.Stat(appPath); statErr == nil {
+		fmt.Printf("[APPS] Removing existing incomplete app directory: %s\n", appPath)
+		if rmErr := fns.RemoveDirectory(appPath); rmErr != nil {
+			return fmt.Errorf("failed to remove incomplete app dir %s: %w", appPath, rmErr)
+		}
+	}
+
+	// Retry by fetching from GitHub directly
+	fmt.Printf("[APPS] App get failed, attempting to fetch app from GitHub...\n")
+	frappeAppUrl := fmt.Sprintf("https://github.com/frappe/%s", app)
+
+	if err := b.ExecRunInBenchPrintIO("bench", "get-app", "--branch", b.Branch, frappeAppUrl); err != nil {
+		return fmt.Errorf("failed to get app %s from %s: %w", app, frappeAppUrl, err)
+	}
+
+	return nil
 }
 
 // fetchMissingApps ensures that every app in instance.json exists in bench/apps
@@ -23,7 +45,7 @@ func (b *Bench) fetchMissingApps(site entity.Site) error {
 		appPath := filepath.Join(b.Path, "apps", app)
 		if _, err := os.Stat(appPath); os.IsNotExist(err) {
 			fmt.Printf("[APP] Fetching missing app: %s\n", app)
-			if err := b.GetApp(app, b.Branch); err != nil {
+			if err := b.GetApp(app); err != nil {
 				fmt.Printf("[ERROR] Failed to fetch app %s: %v\n", app, err)
 				return err
 			}
@@ -59,14 +81,30 @@ func (b *Bench) uninstallExtraApps(siteName string, current, expected []string) 
 	return nil
 }
 
-// InstallApp installs an app on a site
-func (b *Bench) InstallApp(site, app string) error {
-	fmt.Printf("[APPS] Installing app: %s on site: %s\n", app, site)
-	return b.ExecRunInBenchPrintIO("bench", "--site", site, "install-app", app)
-}
-
 // UninstallApp removes an app from a site
 func (b *Bench) UninstallApp(site, app string) error {
 	fmt.Printf("[APPS] Uninstalling app: %s from site: %s\n", app, site)
 	return b.ExecRunInBenchPrintIO("bench", "--site", site, "uninstall-app", app, "--yes")
+}
+
+// InstallApp installs an app on a site
+func (b *Bench) InstallApp(site, app string) error {
+	fmt.Printf("[APPS] Installing app: %s on site: %s\n", app, site)
+
+	// First attempt: direct install
+	if err := b.ExecRunInBenchPrintIO("bench", "--site", site, "install-app", app); err == nil {
+		return nil
+	}
+
+	// Try fetching app
+	if err := b.GetApp(app); err != nil {
+		return fmt.Errorf("failed to install app %s after fetching: %w", app, err)
+	}
+
+	// Retry install after fetching
+	if err := b.ExecRunInBenchPrintIO("bench", "--site", site, "install-app", app); err != nil {
+		return fmt.Errorf("failed to install app %s after fetching: %w", app, err)
+	}
+
+	return nil
 }

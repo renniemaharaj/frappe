@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"goftw/internal/environ"
-	internalExec "goftw/internal/exec"
+	internalExec "goftw/internal/fns"
 	"goftw/internal/whoiam"
 )
 

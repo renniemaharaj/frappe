@@ -1,4 +1,4 @@
-package exec
+package fns
 
 import (
 	"os"

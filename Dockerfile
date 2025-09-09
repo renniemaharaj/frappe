@@ -52,9 +52,16 @@ RUN useradd -ms /bin/bash frappe \
 USER frappe
 WORKDIR /home/frappe
 
-# Verify Node, npm, Yarn, jq
+USER root
 
-RUN node -v && npm -v && yarn -v && jq --version
+# Install pnpm globally (must come before verify)
+RUN npm install -g corepack && corepack enable
+RUN corepack prepare pnpm@latest --activate
+
+# Verify Node, npm, Yarn, pnpm, jq
+RUN node -v && npm -v && yarn -v && pnpm -v && jq --version
+
+# Set Yarn network timeout (keeps older apps happy)
 RUN yarn config set network-timeout 600000 -g
 
 USER root

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	internalBench "goftw/internal/bench"
 	"goftw/internal/db"
 	"goftw/internal/entity"
+	internalMiddleware "goftw/internal/middleware"
 
 	"goftw/internal/environ"
 	"goftw/internal/redis"
@@ -100,10 +102,29 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(internalMiddleware.CORS)
 
 	r.Route("/api/goftw", func(r chi.Router) {
 		r.Get("/sites", bench.ListSitesHandler)
-		r.Get("/apps", bench.ListAppsHandler)
+		// r.Get("/apps", bench.ListAppsHandler)
+		r.Get("/apps", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(200)
+			apps := []string{
+				"erpnext",
+				"builder",
+				"frappe",
+				"hrms",
+				"lending",
+				"helpdesk",
+				// "gameplan",
+				// "drive",
+				"crm",
+				"insights",
+				// "studio",
+				"blog",
+			}
+			json.NewEncoder(w).Encode(apps)
+		})
 		r.Get("/site/{name}", bench.GetSitesHandler)
 		r.Put("/site/{name}", bench.PutSitesHandler)
 	})

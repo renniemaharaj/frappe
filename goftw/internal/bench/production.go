@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"syscall"
 
-	internalExec "goftw/internal/exec"
+	internalExec "goftw/internal/fns"
 )
 
 var (

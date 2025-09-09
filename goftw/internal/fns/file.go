@@ -1,4 +1,4 @@
-package exec
+package fns
 
 import (
 	"bytes"
@@ -14,6 +14,17 @@ func RemoveFile(path string) error {
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to remove file %s: %v", path, err)
+	}
+	return nil
+}
+
+// RemoveDirectory removes a directory and all its contents using sudo.
+func RemoveDirectory(path string) error {
+	cmd := exec.Command("sudo", "rm", "-rf", path)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to remove directory %s: %v", path, err)
 	}
 	return nil
 }
