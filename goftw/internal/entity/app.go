@@ -8,3 +8,8 @@ type App struct {
 	Branch  string // e.g. "develop"
 	Raw     string // original line
 }
+
+type AppForReact struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}

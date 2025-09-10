@@ -109,20 +109,8 @@ func main() {
 		// r.Get("/apps", bench.ListAppsHandler)
 		r.Get("/apps", func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(200)
-			apps := []string{
-				"erpnext",
-				"builder",
-				"frappe",
-				"hrms",
-				"lending",
-				"helpdesk",
-				// "gameplan",
-				// "drive",
-				"crm",
-				"insights",
-				// "studio",
-				"blog",
-			}
+
+			apps := internalBench.GetAppsForReact()
 			json.NewEncoder(w).Encode(apps)
 		})
 		r.Get("/site/{name}", bench.GetSitesHandler)
