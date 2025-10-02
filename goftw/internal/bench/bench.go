@@ -19,19 +19,41 @@ type Bench struct {
 	Branch string `json:"branch"`
 }
 
-// Copy common_sites_config into bench
-func (b *Bench) CopyCommonSitesConfig(configPath string) error {
-	dest := fmt.Sprintf("%s/sites", b.Path)
+// CopyCommonSitesConfig ensures sites/ exists and copies common_sites_config.json
+func (b *Bench) CopyCommonSitesConfig() error {
+	sitesPath := filepath.Join(b.Path, "sites")
+
+	// Ensure sites directory exists
+	if _, err := os.Stat(sitesPath); os.IsNotExist(err) {
+		fmt.Printf("[INFO] Sites directory %s does not exist, creating...\n", sitesPath)
+		if err := os.MkdirAll(sitesPath, 0755); err != nil {
+			fmt.Printf("[WARN] Could not create sites directory without sudo: %v\n", err)
+			if err := internalExec.ExecRunPrintIO("sudo", "mkdir", "-p", sitesPath); err != nil {
+				return fmt.Errorf("failed to create sites directory even with sudo: %w", err)
+			}
+		}
+	}
+
+	// Ensure ownership of sites directory
+	if err := internalExec.ExecRunPrintIO("sudo", "chown", "-R",
+		fmt.Sprintf("%d:%d", os.Getuid(), os.Getgid()), sitesPath); err != nil {
+		return fmt.Errorf("failed to chown sites directory: %w", err)
+	}
+
+	// Copy common_sites_config.json
+	configPath := environ.GetCommonSitesConfigPath()
+	dest := sitesPath
 	if err := internalExec.ExecRunPrintIO("cp", configPath, dest); err != nil {
 		return fmt.Errorf("copy %s -> %s: %w", configPath, dest, err)
 	}
+
 	return nil
 }
 
 // Initialize initializes a new bench with the given name and frappe branch
 func (b *Bench) Initialize(frappeBranch string) error {
 	homeDir := environ.GetFrappeHome()
-	benchPath := filepath.Join(homeDir, b.Path)
+	benchPath := b.Path // already includes homeDir
 
 	// Ensure parent exists
 	if _, err := os.Stat(homeDir); os.IsNotExist(err) {
@@ -39,13 +61,14 @@ func (b *Bench) Initialize(frappeBranch string) error {
 		if err := os.MkdirAll(homeDir, 0755); err != nil {
 			fmt.Printf("[WARN] Could not create directory without sudo: %v\n", err)
 			if err := internalExec.ExecRunPrintIO("sudo", "mkdir", "-p", homeDir); err != nil {
-				return fmt.Errorf("failed to create parent directory even with sudo: %w", err)
+				return fmt.Errorf("[ERROR] Failed to create parent directory even with sudo: %w", err)
 			}
-
 		}
 	}
 
-	if err := internalExec.ExecRunPrintIO("chown", fmt.Sprintf("%d:%d", os.Getuid(), os.Getgid()), homeDir); err != nil {
+	// Ensure ownership of homeDir
+	if err := internalExec.ExecRunPrintIO("sudo", "chown", "-R",
+		fmt.Sprintf("%d:%d", os.Getuid(), os.Getgid()), homeDir); err != nil {
 		return fmt.Errorf("failed to chown parent directory: %w", err)
 	}
 
@@ -55,7 +78,11 @@ func (b *Bench) Initialize(frappeBranch string) error {
 		return fmt.Errorf("[ERROR] Bench initialization failed: %w", err)
 	}
 
-	b.CopyCommonSitesConfig(environ.GetCommonSitesConfigPath())
+	// Copy common_sites_config.json into sites/
+	if err := b.CopyCommonSitesConfig(); err != nil {
+		return fmt.Errorf("[ERROR] Failed to copy common sites config: %w", err)
+	}
+
 	fmt.Printf("[INFO] Bench '%s' initialized successfully\n", b.Path)
 	return nil
 }
