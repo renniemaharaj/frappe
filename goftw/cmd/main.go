@@ -79,8 +79,10 @@ func main() {
 		log.Printf("[BENCH] Bench test succeeded")
 	}
 	// Checkout sites for anomalies and missing sites
-	if err := bench.CheckoutSites(instanceCfx, dbCfg.User, dbCfg.Password); err != nil {
-		log.Fatalf("sites sync failed: %v", err)
+	if instanceCfx.RunSitesManager {
+		if err := bench.CheckoutSites(instanceCfx, dbCfg.User, dbCfg.Password); err != nil {
+			log.Fatalf("sites sync failed: %v", err)
+		}
 	}
 	// Update bench and apps after deployment
 	// if err := bench.ManualUpdate(benchDir); err != nil {

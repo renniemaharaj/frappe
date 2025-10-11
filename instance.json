@@ -2,23 +2,7 @@
     "deployment": "production", 
     "instance_sites": [
         {
-            "site_name": "client1.localhost",
-            "apps": [
-                "frappe",
-                "erpnext"
-                
-            ]
-        },
-        {
-            "site_name": "client2.localhost",
-            "apps": [
-                "frappe",
-                "erpnext",
-                "hrms"
-            ]
-        },
-        {
-            "site_name": "client3.localhost",
+            "site_name": "hrms.localhost",
             "apps": [
                 "frappe",
                 "erpnext",
@@ -27,5 +11,6 @@
         }
     ],
     "drop_abandoned_sites": true,
+    "run_sites_manager": true,
     "frappe_branch": "develop"
 }

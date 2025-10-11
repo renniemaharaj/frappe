@@ -37,7 +37,8 @@ func (b *Bench) CopyCommonSitesConfig() error {
 	// Ensure ownership of sites directory
 	if err := internalExec.ExecRunPrintIO("sudo", "chown", "-R",
 		fmt.Sprintf("%d:%d", os.Getuid(), os.Getgid()), sitesPath); err != nil {
-		return fmt.Errorf("failed to chown sites directory: %w", err)
+		// return fmt.Errorf("failed to chown sites directory: %w", err)
+		fmt.Printf("[Warn] Failed to chown existing: %s", sitesPath)
 	}
 
 	// Copy common_sites_config.json
@@ -47,6 +48,7 @@ func (b *Bench) CopyCommonSitesConfig() error {
 		return fmt.Errorf("copy %s -> %s: %w", configPath, dest, err)
 	}
 
+	fmt.Printf("[Patch] Successfully copied custom common_site_config to %s", sitesPath)
 	return nil
 }
 

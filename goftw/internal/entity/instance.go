@@ -10,6 +10,7 @@ type Instance struct {
 	FrappeBranch string `json:"frappe_branch"`
 	// BenchName          string         `json:"frappe_bench"`
 	DropAbandonedSites bool   `json:"drop_abandoned_sites"`
+	RunSitesManager    bool   `json:"run_sites_manager"`
 	Sites              []Site `json:"instance_sites"`
 }
 
