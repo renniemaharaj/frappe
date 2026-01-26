@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,18 +14,26 @@ import (
 	"goftw/internal/environ"
 	"goftw/internal/redis"
 
+	// "goftw/internal/ssh"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
+	// COST OPTIMIZATION: SSH key-based authentication setup
+	// if err := ssh.Setup(); err != nil {
+	// 	log.Fatalf("SSH setup failed: %v", err)
+	// }
+
 	// Paths / environment
+	// COST OPTIMIZATION: Debug disabled for demo instance
 	dbCfg := db.Config{
 		Host:     environ.GetEnv("MARIADB_HOST", "mariadb"),
 		Port:     environ.GetEnv("MARIADB_PORT", "3306"),
 		User:     environ.GetEnv("MARIADB_ROOT_USERNAME", "root"),
 		Password: environ.GetEnv("MARIADB_ROOT_PASSWORD", "root"),
-		Debug:    true,
+		Debug:    false,
 		Wait:     true,
 	}
 	// Load instance.json
@@ -42,9 +49,7 @@ func main() {
 	}
 	deployment := instanceCfx.Deployment
 
-	// ---------------------------
 	// Wait for DB
-	// ---------------------------
 	if err := db.WaitForDB(dbCfg); err != nil {
 		log.Fatalf("database check failed: %v", err)
 	}
@@ -102,19 +107,14 @@ func main() {
 		}
 	}
 
+	// COST OPTIMIZATION: API restricted to sites-only for demo instance
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(internalMiddleware.CORS)
 
 	r.Route("/api/goftw", func(r chi.Router) {
+		// Sites management endpoints only (apps endpoint disabled)
 		r.Get("/sites", bench.ListSitesHandler)
-		// r.Get("/apps", bench.ListAppsHandler)
-		r.Get("/apps", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(200)
-
-			apps := internalBench.GetAppsForReact()
-			json.NewEncoder(w).Encode(apps)
-		})
 		r.Get("/site/{name}", bench.GetSitesHandler)
 		r.Put("/site/{name}", bench.PutSitesHandler)
 	})
