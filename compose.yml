@@ -21,7 +21,7 @@ services:
     volumes:
       - ./mount:/home/frappe
     ports:
-      - "22:22" # SSH (key-based only)
+      # - "22:22" # SSH (key-based only)
       - "80:80" # Nginx
       - "8000:8000" # Frappe web
       - "9000:9000" # Socket.IO port
