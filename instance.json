@@ -1,17 +1,9 @@
 {
     "deployment": "production",
-    "server_name": "ec2-18-191-193-6.us-east-2.compute.amazonaws.com",
+    "server_name": "local",
     "instance_sites": [
         {
-            "site_name": "hrms.localhost",
-            "apps": [
-                "frappe",
-                "erpnext",
-                "hrms"
-            ]
-        },
-        {
-            "site_name": "payroll.localhost",
+            "site_name": "hrms.local",
             "apps": [
                 "frappe",
                 "erpnext",
