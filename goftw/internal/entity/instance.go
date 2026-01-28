@@ -7,6 +7,7 @@ import (
 
 type Instance struct {
 	Deployment   string `json:"deployment"`
+	ServerName   string `json:"server_name"`
 	FrappeBranch string `json:"frappe_branch"`
 	// BenchName          string         `json:"frappe_bench"`
 	DropAbandonedSites bool   `json:"drop_abandoned_sites"`

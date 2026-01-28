@@ -19,7 +19,7 @@ func (b *Bench) RunSupervisorNginx() error {
 		return fmt.Errorf("cannot run production WSGI: unmanaged shell deployment active")
 	}
 	// Configure nginx
-	if err := b.configurePatchNginx(b); err != nil {
+	if err := b.configurePatchNginx(b, b.ServerName); err != nil {
 		fmt.Printf("[ERROR] Failed to setup nginx: %v\n", err)
 		return err
 	}
@@ -102,7 +102,7 @@ func (b *Bench) configurePatchSupervisor(bench *Bench) (string, error) {
 }
 
 // configurePatchNginx sets up nginx using bench and symlinks the config.
-func (b *Bench) configurePatchNginx(bench *Bench) error {
+func (b *Bench) configurePatchNginx(bench *Bench, serverName string) error {
 	nginxConf := bench.Path + "/config/nginx.conf"
 	nginxConfDest := "/etc/nginx/conf.d/frappe-bench.conf"
 	logPatch := "/patches/log.patch.conf"
@@ -133,6 +133,16 @@ func (b *Bench) configurePatchNginx(bench *Bench) error {
 	if err != nil {
 		fmt.Printf("[ERROR] Failed to symlink nginx config: %v\n", err)
 		return err
+	}
+
+	// Patch server_name if provided
+	if serverName != "" {
+		fmt.Printf("[PATCH] Patching server_name to: %s\n", serverName)
+		// Replace 'server_name' line with the provided server name
+		if err := internalExec.ExecRunPrintIO("sudo", "sed", "-i", "s/server_name .*/server_name "+serverName+";", nginxConfDest); err != nil {
+			fmt.Printf("[ERROR] Failed to patch server_name: %v\n", err)
+			// not fatal — continue
+		}
 	}
 
 	fmt.Printf("[NGINX] Nginx configured and symlinked\n")

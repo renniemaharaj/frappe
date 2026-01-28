@@ -65,9 +65,10 @@ func main() {
 	}
 	// Initialize Bench if not exists
 	bench := &internalBench.Bench{
-		Name:   "frappe-bench",
-		Path:   environ.GetBenchPath(),
-		Branch: instanceCfx.FrappeBranch,
+		Name:       "frappe-bench",
+		Path:       environ.GetBenchPath(),
+		Branch:     instanceCfx.FrappeBranch,
+		ServerName: instanceCfx.ServerName,
 	}
 
 	if _, err := os.Stat(bench.Path); os.IsNotExist(err) {

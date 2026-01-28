@@ -14,9 +14,10 @@ import (
 
 // The structure of a branch type
 type Bench struct {
-	Name   string `json:"name"`
-	Path   string `json:"path"`
-	Branch string `json:"branch"`
+	Name       string `json:"name"`
+	Path       string `json:"path"`
+	Branch     string `json:"branch"`
+	ServerName string `json:"server_name"`
 }
 
 // CopyCommonSitesConfig ensures sites/ exists and copies common_sites_config.json
