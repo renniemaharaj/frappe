@@ -141,9 +141,9 @@ func (b *Bench) configurePatchNginx(bench *Bench, serverName string) error {
 	}
 
 	fmt.Printf("[NGINX] Nginx configured and symlinked\n")
-	if str, err := internalExec.ReadFile(nginxConf); err == nil {
-		fmt.Println(string(str))
-	}
+	// if str, err := internalExec.ReadFile(nginxConf); err == nil {
+	// 	fmt.Println(string(str))
+	// }
 	return nil
 }
 
