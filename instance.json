@@ -1,9 +1,9 @@
 {
     "deployment": "production",
-    "server_name": "local",
+    "server_name": "example.com",
     "instance_sites": [
         {
-            "site_name": "hrms.local",
+            "site_name": "home.example.com",
             "apps": [
                 "frappe",
                 "erpnext",

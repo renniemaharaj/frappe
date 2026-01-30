@@ -22,7 +22,7 @@ services:
       - ./mount:/home/frappe
     ports:
       # - "22:22" # SSH (key-based only)
-      - "80:80" # Nginx
+      - "80:80" # Nginx (main Frappe)
       - "8000:8000" # Frappe web
       - "9000:9000" # Socket.IO port
       - "3000:3000" # API
@@ -31,6 +31,23 @@ services:
       - redis-cache
       - redis-queue
       - redis-socketio
+    networks:
+      - frappe_net
+    logging:
+      driver: local
+
+  nginx-dynamic-proxy:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile.proxy
+    restart: always
+    ports:
+      - "2020:2020"
+    volumes:
+      - ./mount/frappe-bench/sites:/var/www/sites:ro
+      - /var/log/nginx:/var/log/nginx
+    depends_on:
+      - frappe
     networks:
       - frappe_net
     logging:

@@ -1,0 +1,33 @@
+upstream frappe_main {
+    server frappe:80;
+}
+
+server {
+    listen 2020;
+    listen [::]:2020;
+    server_name ${SERVER_NAME};
+
+    access_log /var/log/nginx/dynamic_proxy.access.log main;
+    error_log /var/log/nginx/dynamic_proxy.error.log warn;
+
+    location / {
+        proxy_http_version 1.1;
+
+        proxy_set_header Host home.${SERVER_NAME};
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto http;
+        proxy_set_header X-Real-IP $remote_addr;
+
+        proxy_pass http://frappe_main;
+
+        proxy_read_timeout 120s;
+        proxy_connect_timeout 30s;
+        proxy_send_timeout 60s;
+    }
+
+    location /health {
+        access_log off;
+        return 200 "healthy\n";
+        add_header Content-Type text/plain;
+    }
+}
