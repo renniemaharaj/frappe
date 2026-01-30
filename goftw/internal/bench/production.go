@@ -12,6 +12,7 @@ import (
 
 var (
 	productionCMD *exec.Cmd
+	blockRegex    = regexp.MustCompile(`server_name\s+([\s\S]*?);`)
 )
 
 // RunSupervisorNginx sets up supervisor for the bench, merges configs, and starts supervisord.
@@ -129,47 +130,8 @@ func (b *Bench) configurePatchNginx(bench *Bench, serverName string) error {
 		}
 	}
 
-	// Patch server_name BEFORE symlinking
-	if serverName != "" {
-		fmt.Printf("[PATCH] Patching server_name to: %s in source file %s\n", serverName, nginxConf)
-
-		// Verify source config file exists
-		if _, err := os.Stat(nginxConf); os.IsNotExist(err) {
-			return fmt.Errorf("generated nginx config file not found at %s", nginxConf)
-		}
-
-		// Read the generated config
-		content, err := internalExec.ReadFile(nginxConf)
-		if err != nil {
-			return fmt.Errorf("failed to read nginx config: %v", err)
-		}
-
-		// Check if server_name exists in the config
-		contentStr := string(content)
-		if contentStr == "" {
-			return fmt.Errorf("nginx config at %s is empty", nginxConf)
-		}
-
-		// Replace multi-line server_name block with single-line version
-		// Matches: server_name\n\s+<domains>\n\s+;
-		re := regexp.MustCompile(`server_name\s+[^;]+;`)
-		patchedContent := re.ReplaceAllString(contentStr, "server_name "+serverName+";")
-
-		if patchedContent == contentStr {
-			fmt.Println("[DEBUG] Original nginx config content:")
-			fmt.Println(contentStr)
-			return fmt.Errorf("server_name pattern not found in nginx config - regex may not match format")
-		}
-
-		// Write the patched content back
-		if err := os.WriteFile(nginxConf, []byte(patchedContent), 0644); err != nil {
-			return fmt.Errorf("failed to write patched nginx config: %v", err)
-		}
-
-		fmt.Printf("[PATCH] Successfully patched server_name to: %s\n", serverName)
-		fmt.Println("[DEBUG] Patched nginx config:")
-		// fmt.Println(patchedContent)
-	}
+	// Note: Dynamic proxy (port 2020) is handled by a separate nginx service in docker-compose
+	// No need to patch server_name here for dynamic routing
 
 	// Symlink bench-generated config
 	err := internalExec.ExecRunPrintIO("sudo", "ln", "-sf", nginxConf, nginxConfDest)
@@ -179,6 +141,9 @@ func (b *Bench) configurePatchNginx(bench *Bench, serverName string) error {
 	}
 
 	fmt.Printf("[NGINX] Nginx configured and symlinked\n")
+	if str, err := internalExec.ReadFile(nginxConf); err == nil {
+		fmt.Println(string(str))
+	}
 	return nil
 }
 
