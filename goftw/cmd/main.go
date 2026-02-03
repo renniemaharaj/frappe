@@ -21,13 +21,6 @@ import (
 )
 
 func main() {
-	// COST OPTIMIZATION: SSH key-based authentication setup
-	// if err := ssh.Setup(); err != nil {
-	// 	log.Fatalf("SSH setup failed: %v", err)
-	// }
-
-	// Paths / environment
-	// COST OPTIMIZATION: Debug disabled for demo instance
 	dbCfg := db.Config{
 		Host:     environ.GetEnv("MARIADB_HOST", "mariadb"),
 		Port:     environ.GetEnv("MARIADB_PORT", "3306"),
@@ -108,13 +101,13 @@ func main() {
 		}
 	}
 
-	// COST OPTIMIZATION: API restricted to sites-only for demo instance
+	// api restricted to sites-only for demo instance
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(internalMiddleware.CORS)
 
 	r.Route("/api/goftw", func(r chi.Router) {
-		// Sites management endpoints only (apps endpoint disabled)
+		// sites management endpoints only (apps endpoint disabled)
 		r.Get("/sites", bench.ListSitesHandler)
 		r.Get("/site/{name}", bench.GetSitesHandler)
 		r.Put("/site/{name}", bench.PutSitesHandler)

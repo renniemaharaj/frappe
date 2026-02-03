@@ -1,13 +1,14 @@
 {
     "deployment": "production",
-    "server_name": "example.com",
+    "server_name": "localhost",
     "instance_sites": [
         {
-            "site_name": "home.example.com",
+            "site_name": "home.localhost",
             "apps": [
                 "frappe",
                 "erpnext",
-                "hrms"
+                "hrms",
+                "hrtmpay"
             ]
         }
     ],
