@@ -7,8 +7,7 @@
             "apps": [
                 "frappe",
                 "erpnext",
-                "hrms",
-                "hrtmpay"
+                "hrms"
             ]
         }
     ],
