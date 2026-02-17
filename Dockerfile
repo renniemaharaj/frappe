@@ -1,6 +1,5 @@
 # Stage 1: Go builder
 FROM golang:1.24-alpine AS go-builder
-
 WORKDIR /app
 COPY goftw /app/goftw
 WORKDIR /app/goftw/cmd
@@ -20,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     build-essential pkg-config curl wget gnupg sudo cron jq nginx \
     openssh-server openssh-client \
     libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-    libsqlite3-dev libffi-dev liblzma-dev uuid-dev \
+    sqlite3 libsqlite3-dev libffi-dev liblzma-dev uuid-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # MariaDB utf8mb4

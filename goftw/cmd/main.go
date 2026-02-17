@@ -11,6 +11,7 @@ import (
 	"goftw/internal/entity"
 	internalMiddleware "goftw/internal/middleware"
 
+	"goftw/internal/auth"
 	"goftw/internal/environ"
 	"goftw/internal/redis"
 
@@ -101,21 +102,35 @@ func main() {
 		}
 	}
 
-	// api restricted to sites-only for demo instance
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(internalMiddleware.CORS)
+	// API Toggle Logic
+	apiEnabled := environ.GetEnv("GOFTW_API_ENABLED", "true") == "true"
 
-	r.Route("/api/goftw", func(r chi.Router) {
-		// sites management endpoints only (apps endpoint disabled)
+	if apiEnabled {
+		// Initialize Auth DB
+		if err := auth.InitDB("/home/frappe/auth.db"); err != nil {
+			log.Fatalf("failed to init auth db: %v", err)
+		}
+
+		// api restricted to sites-only for demo instance
+		r := chi.NewRouter()
+		r.Use(middleware.Logger)
+		r.Use(internalMiddleware.CORS)
+
+		r.Post("/api/goftw/login", auth.LoginHandler)
+
+		r.Route("/api/goftw", func(r chi.Router) {
+		r.Use(auth.TokenMiddleware)
+			// sites management endpoints only (apps endpoint disabled)
 		r.Get("/sites", bench.ListSitesHandler)
 		r.Get("/site/{name}", bench.GetSitesHandler)
 		r.Put("/site/{name}", bench.PutSitesHandler)
-	})
+		})
 
-	fmt.Printf("[SERVER] Server running on :3000")
-	err = http.ListenAndServe(":3000", r)
-	if err != nil {
-		fmt.Printf("[ERROR] Could not start server %v", err)
+		fmt.Printf("[SERVER] API Server running on :3000\n")
+		log.Fatal(http.ListenAndServe(":3000", r))
+	} else {
+		fmt.Printf("[SERVER] API is disabled (GOFTW_API_ENABLED=false). Running in worker/proxy mode only.\n")
+		// Keep the process alive to maintain the background processes (supervisord/bench)
+		select {}
 	}
 }
