@@ -1,17 +1,17 @@
 {
-    "deployment": "production",
-    "server_name": "localhost",
-    "instance_sites": [
-        {
-            "site_name": "home.localhost",
-            "apps": [
-                "frappe",
-                "erpnext",
-                "hrms"
-            ]
-        }
-    ],
-    "drop_abandoned_sites": true,
-    "run_sites_manager": true,
-    "frappe_branch": "develop"
+  "deployment": "production",
+  "server_name": "localhost",
+  "instance_sites": [
+    {
+      "site_name": "home.localhost",
+      "apps": ["frappe", "erpnext"]
+    }
+  ],
+  "drop_abandoned_sites": false,
+  "run_sites_manager": true,
+  "frappe_bench": "frappe-v16-bench",
+  "frappe_branch": "v16.35.0",
+  "app_refs": {
+    "erpnext": "v16.36.0"
+  }
 }

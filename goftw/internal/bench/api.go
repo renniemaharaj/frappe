@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	// "goftw/internal/deploy"
-	"goftw/internal/environ"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -30,7 +28,7 @@ func writeError(w http.ResponseWriter, status int, msg string) {
 // ListSitesHandler lists all sites
 func (b *Bench) ListSitesHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("[API] ListSitesHandler called")
-	benchDir := environ.GetBenchPath()
+	benchDir := b.Path
 	fmt.Printf("[API] Bench directory: %s\n", benchDir)
 
 	sites, err := b.ListSites()
@@ -46,7 +44,7 @@ func (b *Bench) ListSitesHandler(w http.ResponseWriter, r *http.Request) {
 // ListAppsHandler lists all apps in the bench
 func (b *Bench) ListAppsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("[API] ListAppsHandler called")
-	benchDir := environ.GetBenchPath()
+	benchDir := b.Path
 	fmt.Printf("[API] Bench directory: %s\n", benchDir)
 
 	apps, err := b.ListApps()

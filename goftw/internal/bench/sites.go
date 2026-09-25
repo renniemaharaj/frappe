@@ -3,6 +3,7 @@ package bench
 import (
 	"fmt"
 	"goftw/internal/entity"
+	"os"
 )
 
 // siteExistsInCfx checks if a site exists in the instance configuration
@@ -17,7 +18,11 @@ func siteExistsInCfx(site string, cfg *entity.Instance) bool {
 
 // New creates a new site
 func (b *Bench) NewSite(site, dbRootUser, dbRootPass string) error {
-	err := b.ExecRunInBenchPrintIO("bench", "new-site", site, "--db-root-username", dbRootUser, "--db-root-password", dbRootPass, "--admin-password", "admin")
+	adminPassword := os.Getenv("FRAPPE_ADMIN_PASSWORD")
+	if adminPassword == "" {
+		return fmt.Errorf("FRAPPE_ADMIN_PASSWORD is required to create a site")
+	}
+	err := b.ExecRunInBenchPrintIO("bench", "new-site", site, "--db-root-username", dbRootUser, "--db-root-password", dbRootPass, "--admin-password", adminPassword, "--mariadb-user-host-login-scope", "%", "--set-default")
 	return err
 }
 

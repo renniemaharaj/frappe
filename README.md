@@ -67,22 +67,22 @@ The entrypoint (Go or shell) handles site management automatically:
     "instance_sites": [
         {
             "site_name": "frontend",
-            "apps": ["frappe", "erpnext", "hrms"]
-        },
-        {
-            "site_name": "frontend1",
             "apps": ["frappe", "erpnext"]
         }
     ],
     "drop_abandoned_sites": true,
-    "frappe_branch": "develop"
+    "frappe_bench": "frappe-v16-bench",
+    "frappe_branch": "v16.35.0",
+    "app_refs": {"erpnext": "v16.36.0"}
 }
 ```
 
 * `deployment`: `production` or `development` (controls supervisor/nginx vs `bench start`).
 * `instance_sites`: array of site objects; each object defines a `site_name` and required `apps`.
 * `drop_abandoned_sites`: if `true`, sites not listed will be dropped automatically.
-* `frappe_branch`: branch used by `bench init` and `bench get-app`.
+* `frappe_bench`: Bench directory under `/home/frappe`; use a new name for a fresh site.
+* `frappe_branch`: branch or tag used by `bench init` and as the default for `bench get-app`.
+* `app_refs`: optional app-specific branch or tag overrides for `bench get-app`.
 
 ### Example `common_site_config.json` (repo root)
 
@@ -166,21 +166,22 @@ git clone https://github.com/renniemaharaj/hrtm-frappe
 cd hrtm-frappe
 ```
 
-2. Edit `instance.json` in the repo root for custom sites, apps, or branch.
-3. Start the environment:
+2. Copy `.env.example` to `.env` and set `FRAPPE_ADMIN_PASSWORD` to a strong password.
+3. Edit `instance.json` in the repo root for custom sites, apps, or branch.
+4. Start the environment:
 
 ```bash
 docker compose up -d --build
 ```
 
-4. Verify services are running and inspect logs:
+5. Verify services are running and inspect logs:
 
 ```bash
 docker ps
 docker compose logs -f frappe
 ```
 
-5. Enter the container for manual bench commands (if required):
+6. Enter the container for manual bench commands (if required):
 
 ```bash
 docker compose exec frappe bash

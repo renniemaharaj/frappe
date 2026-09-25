@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	internalBench "goftw/internal/bench"
 	"goftw/internal/db"
@@ -59,9 +60,10 @@ func main() {
 	}
 	// Initialize Bench if not exists
 	bench := &internalBench.Bench{
-		Name:       "frappe-bench",
-		Path:       environ.GetBenchPath(),
+		Name:       instanceCfx.BenchName,
+		Path:       filepath.Join(environ.GetFrappeHome(), instanceCfx.BenchName),
 		Branch:     instanceCfx.FrappeBranch,
+		AppRefs:    instanceCfx.AppRefs,
 		ServerName: instanceCfx.ServerName,
 	}
 
@@ -119,11 +121,11 @@ func main() {
 		r.Post("/api/goftw/login", auth.LoginHandler)
 
 		r.Route("/api/goftw", func(r chi.Router) {
-		r.Use(auth.TokenMiddleware)
+			r.Use(auth.TokenMiddleware)
 			// sites management endpoints only (apps endpoint disabled)
-		r.Get("/sites", bench.ListSitesHandler)
-		r.Get("/site/{name}", bench.GetSitesHandler)
-		r.Put("/site/{name}", bench.PutSitesHandler)
+			r.Get("/sites", bench.ListSitesHandler)
+			r.Get("/site/{name}", bench.GetSitesHandler)
+			r.Put("/site/{name}", bench.PutSitesHandler)
 		})
 
 		fmt.Printf("[SERVER] API Server running on :3000\n")

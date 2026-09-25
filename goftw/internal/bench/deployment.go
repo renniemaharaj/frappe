@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"goftw/internal/environ"
 	"goftw/internal/whoiam"
 )
 
@@ -16,7 +15,7 @@ var (
 // This is "unmanned" mode where Go should not attempt to control WSGI state.
 func (b *Bench) DeployThroughShell(deployMode string) {
 	unmannedDeployment = true
-	os.Setenv("BENCH_DIR", environ.GetBenchPath())
+	os.Setenv("BENCH_DIR", b.Path)
 	os.Setenv("DEPLOYMENT", deployMode)
 	os.Setenv("MERGED_SUPERVISOR_CONF", "/supervisor-merged.conf")
 	os.Setenv("HEAD_PATCH_CONF", "/patches/head.patch.conf")

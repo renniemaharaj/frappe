@@ -11,8 +11,12 @@ import (
 
 // GetApp fetches an app from branch, auto-healing if a previous fetch was incomplete
 func (b *Bench) GetApp(app string) error {
+	ref := b.Branch
+	if pinnedRef := b.AppRefs[app]; pinnedRef != "" {
+		ref = pinnedRef
+	}
 	// First attempt: try to get by name directly
-	if err := b.ExecRunInBenchPrintIO("bench", "get-app", "--branch", b.Branch, app); err == nil {
+	if err := b.ExecRunInBenchPrintIO("bench", "get-app", "--branch", ref, app); err == nil {
 		return nil
 	}
 
@@ -29,7 +33,7 @@ func (b *Bench) GetApp(app string) error {
 	fmt.Printf("[APPS] App get failed, attempting to fetch app from GitHub...\n")
 	frappeAppUrl := fmt.Sprintf("https://github.com/frappe/%s", app)
 
-	if err := b.ExecRunInBenchPrintIO("bench", "get-app", "--branch", b.Branch, frappeAppUrl); err != nil {
+	if err := b.ExecRunInBenchPrintIO("bench", "get-app", "--branch", ref, frappeAppUrl); err != nil {
 		return fmt.Errorf("failed to get app %s from %s: %w", app, frappeAppUrl, err)
 	}
 
@@ -90,20 +94,8 @@ func (b *Bench) UninstallApp(site, app string) error {
 // InstallApp installs an app on a site
 func (b *Bench) InstallApp(site, app string) error {
 	fmt.Printf("[APPS] Installing app: %s on site: %s\n", app, site)
-
-	// First attempt: direct install
-	if err := b.ExecRunInBenchPrintIO("bench", "--site", site, "install-app", app); err == nil {
-		return nil
-	}
-
-	// Try fetching app
-	if err := b.GetApp(app); err != nil {
-		return fmt.Errorf("failed to install app %s after fetching: %w", app, err)
-	}
-
-	// Retry install after fetching
 	if err := b.ExecRunInBenchPrintIO("bench", "--site", site, "install-app", app); err != nil {
-		return fmt.Errorf("failed to install app %s after fetching: %w", app, err)
+		return fmt.Errorf("failed to install app %s: %w", app, err)
 	}
 
 	return nil

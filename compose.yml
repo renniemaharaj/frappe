@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   frappe:
     build:
@@ -15,6 +13,7 @@ services:
       MARIADB_USER: frappe
       MARIADB_PASSWORD: frappe
       MARIADB_DATABASE: frappe
+      FRAPPE_ADMIN_PASSWORD: ${FRAPPE_ADMIN_PASSWORD:?Set FRAPPE_ADMIN_PASSWORD in .env}
       # SSH key-based authentication (set via env or .env file)
       SSH_PUBLIC_KEY: ${SSH_PUBLIC_KEY:-}
     restart: always

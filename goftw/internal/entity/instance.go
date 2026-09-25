@@ -6,13 +6,14 @@ import (
 )
 
 type Instance struct {
-	Deployment   string `json:"deployment"`
-	ServerName   string `json:"server_name"`
-	FrappeBranch string `json:"frappe_branch"`
-	// BenchName          string         `json:"frappe_bench"`
-	DropAbandonedSites bool   `json:"drop_abandoned_sites"`
-	RunSitesManager    bool   `json:"run_sites_manager"`
-	Sites              []Site `json:"instance_sites"`
+	Deployment         string            `json:"deployment"`
+	ServerName         string            `json:"server_name"`
+	FrappeBranch       string            `json:"frappe_branch"`
+	BenchName          string            `json:"frappe_bench"`
+	AppRefs            map[string]string `json:"app_refs"`
+	DropAbandonedSites bool              `json:"drop_abandoned_sites"`
+	RunSitesManager    bool              `json:"run_sites_manager"`
+	Sites              []Site            `json:"instance_sites"`
 }
 
 // LoadInstance loads and parses instance.json
@@ -27,6 +28,9 @@ func LoadInstance(path string) (*Instance, error) {
 	}
 	if cfg.FrappeBranch == "" {
 		cfg.FrappeBranch = "develop"
+	}
+	if cfg.BenchName == "" {
+		cfg.BenchName = "frappe-bench"
 	}
 	if cfg.Deployment == "" {
 		cfg.Deployment = "develop"
