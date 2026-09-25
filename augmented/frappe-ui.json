@@ -1,0 +1,18 @@
+{
+  "feature": "frappe_ui",
+  "guide": "augmented/frappe-ui.md",
+  "tools": [
+    "frappe_route",
+    "frappe_form",
+    "frappe_field",
+    "frappe_grid",
+    "frappe_dialog",
+    "frappe_list"
+  ],
+  "healthy_signals": [
+    "frappe_route.route is available on a Desk page",
+    "frappe_form.available is true on a Form route",
+    "frappe_grid.row_count matches the displayed child table"
+  ],
+  "restart_requirement": "Restart the MCP client connection when server tools change."
+}

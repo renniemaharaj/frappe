@@ -1,0 +1,38 @@
+{
+  "feature": "browser",
+  "guide": "augmented/browser.md",
+  "tools": [
+    "browser_status",
+    "browser_login",
+    "browser_open",
+    "browser_back",
+    "browser_reload",
+    "browser_snapshot",
+    "browser_screenshot",
+    "browser_get",
+    "browser_exists",
+    "browser_count",
+    "browser_click",
+    "browser_fill",
+    "browser_select",
+    "browser_check",
+    "browser_uncheck",
+    "browser_upload",
+    "browser_download",
+    "browser_downloads",
+    "browser_press",
+    "browser_wait",
+    "browser_wait_url",
+    "browser_wait_idle",
+    "browser_console",
+    "browser_errors",
+    "browser_network",
+    "browser_request"
+  ],
+  "healthy_signals": [
+    "browser_status.authenticated is true",
+    "browser_status.user is the configured account",
+    "browser_open returns a page on the configured site"
+  ],
+  "restart_requirement": "Restart the MCP client connection when server tools change."
+}

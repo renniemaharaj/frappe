@@ -73,7 +73,8 @@ The entrypoint (Go or shell) handles site management automatically:
     "drop_abandoned_sites": true,
     "frappe_bench": "frappe-v16-bench",
     "frappe_branch": "v16.35.0",
-    "app_refs": {"erpnext": "v16.36.0"}
+    "app_refs": {"erpnext": "v16.36.0", "hrms": "version-16", "hrtmpay": "main"},
+    "app_sources": {"hrms": "https://github.com/frappe/hrms.git", "hrtmpay": "/home/frappe/hrtmpay-main"}
 }
 ```
 
@@ -83,6 +84,8 @@ The entrypoint (Go or shell) handles site management automatically:
 * `frappe_bench`: Bench directory under `/home/frappe`; use a new name for a fresh site.
 * `frappe_branch`: branch or tag used by `bench init` and as the default for `bench get-app`.
 * `app_refs`: optional app-specific branch or tag overrides for `bench get-app`.
+* `app_sources`: optional Git repository URLs or local checkout paths for apps outside the default Frappe organization. HrtmPay needs HRMS; list `hrms` before `hrtmpay` in `instance_sites[].apps`.
+  For a private HrtmPay repository, clone `main` on the host into `mount/hrtmpay-main`; the mounted `/home/frappe/hrtmpay-main` path lets `bench get-app` install it without putting Git credentials in the container.
 
 ### Example `common_site_config.json` (repo root)
 
@@ -126,6 +129,10 @@ frappe:
 ```
 
 ## Running the Project
+
+### Browser automation
+
+The Playwright MCP server in [mcp/](mcp/) can log into `home.localhost`, operate form controls, inspect Frappe forms and child tables, capture downloads, and diagnose browser/network failures. Its live tool catalog and workflow guides are under [augmented/](augmented/). Build it with `cd mcp && npm ci && npm run build`, then restart the MCP client to load the project scoped `.codex/config.toml`. Run `npm run smoke` in `mcp/` to verify login, Salary Slip list inspection, and Employee form inspection.
 
 1. **Build and start containers:**
 

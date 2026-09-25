@@ -1,7 +1,0 @@
-mount
-mysqldata
-redis-cache
-redis-queue
-redis-socketio
-.stashes
-assets

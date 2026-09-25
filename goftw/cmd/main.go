@@ -64,6 +64,7 @@ func main() {
 		Path:       filepath.Join(environ.GetFrappeHome(), instanceCfx.BenchName),
 		Branch:     instanceCfx.FrappeBranch,
 		AppRefs:    instanceCfx.AppRefs,
+		AppSources: instanceCfx.AppSources,
 		ServerName: instanceCfx.ServerName,
 	}
 

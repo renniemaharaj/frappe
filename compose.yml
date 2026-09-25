@@ -35,22 +35,22 @@ services:
     logging:
       driver: local
 
-  nginx-dynamic-proxy:
-    image: nginx:latest
-    restart: always
-    ports:
-      - "2020:2020"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d/dynamic-proxy.conf:/etc/nginx/conf.d/dynamic-proxy.conf:ro
-      # - ./mount/frappe-bench/sites:/var/www/sites:ro
-      - /var/log/nginx:/var/log/nginx
-    depends_on:
-      - frappe
-    networks:
-      - frappe_net
-    logging:
-      driver: local
+  # nginx-dynamic-proxy:
+  #   image: nginx:latest
+  #   restart: always
+  #   ports:
+  #     - "2020:2020"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/conf.d/dynamic-proxy.conf:/etc/nginx/conf.d/dynamic-proxy.conf:ro
+  #     # - ./mount/frappe-bench/sites:/var/www/sites:ro
+  #     - /var/log/nginx:/var/log/nginx
+  #   depends_on:
+  #     - frappe
+  #   networks:
+  #     - frappe_net
+  #   logging:
+  #     driver: local
 
   mariadb:
     image: mariadb:11

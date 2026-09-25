@@ -15,6 +15,9 @@ func (b *Bench) GetApp(app string) error {
 	if pinnedRef := b.AppRefs[app]; pinnedRef != "" {
 		ref = pinnedRef
 	}
+	if source := b.AppSources[app]; source != "" {
+		return b.ExecRunInBenchPrintIO("bench", "get-app", "--branch", ref, source)
+	}
 	// First attempt: try to get by name directly
 	if err := b.ExecRunInBenchPrintIO("bench", "get-app", "--branch", ref, app); err == nil {
 		return nil

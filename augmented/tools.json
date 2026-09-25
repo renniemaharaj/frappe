@@ -1,0 +1,1167 @@
+{
+  "schema_version": 1,
+  "source": "MCP tools/list",
+  "server": "mcp/dist/server.js",
+  "tools": [
+    {
+      "name": "browser_status",
+      "title": "Browser status",
+      "description": "Check the configured Frappe site, current page, and logged-in user.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "status"
+    },
+    {
+      "name": "browser_login",
+      "title": "Log in to Frappe",
+      "description": "Log into the configured Frappe site using credentials from the local environment; persist the browser session.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "login"
+    },
+    {
+      "name": "browser_open",
+      "title": "Open Frappe page",
+      "description": "Navigate the current browser tab to a path on the configured Frappe site.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "navigate"
+    },
+    {
+      "name": "browser_snapshot",
+      "title": "Inspect Frappe page",
+      "description": "Return a compact accessibility snapshot of the current Frappe page for locating controls.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "max_chars": {
+            "default": 18000,
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 30000
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "observe"
+    },
+    {
+      "name": "browser_screenshot",
+      "title": "Screenshot Frappe page",
+      "description": "Capture the current browser tab as a PNG image.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "full_page": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "observe"
+    },
+    {
+      "name": "browser_click",
+      "title": "Click Frappe control",
+      "description": "Click one visible control selected by role, label, text, placeholder, or CSS.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "interact"
+    },
+    {
+      "name": "browser_fill",
+      "title": "Fill Frappe field",
+      "description": "Fill one text field; the returned result does not echo its value.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "value"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "interact"
+    },
+    {
+      "name": "browser_select",
+      "title": "Select Frappe option",
+      "description": "Choose an option in a native select field by its visible label or value.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          },
+          "option": {
+            "type": "string"
+          },
+          "by_option": {
+            "default": "label",
+            "type": "string",
+            "enum": [
+              "label",
+              "value"
+            ]
+          }
+        },
+        "required": [
+          "target",
+          "option"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "interact"
+    },
+    {
+      "name": "browser_press",
+      "title": "Press key in Frappe",
+      "description": "Press a key or key chord in one focused control, such as Enter or ControlOrMeta+A.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "target",
+          "key"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "interact"
+    },
+    {
+      "name": "browser_wait",
+      "title": "Wait for Frappe UI",
+      "description": "Wait until a selected control is visible after a page or form action.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          },
+          "state": {
+            "default": "visible",
+            "type": "string",
+            "enum": [
+              "visible",
+              "hidden",
+              "attached",
+              "detached",
+              "enabled",
+              "disabled"
+            ]
+          },
+          "timeout_ms": {
+            "default": 10000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 30000
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "observe"
+    },
+    {
+      "name": "browser_back",
+      "description": "Go back in the current Frappe tab.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "navigate"
+    },
+    {
+      "name": "browser_reload",
+      "description": "Reload the current Frappe tab.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "navigate"
+    },
+    {
+      "name": "browser_get",
+      "description": "Read text, input value, checked/disabled/visible state, or an attribute from one element.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          },
+          "property": {
+            "type": "string",
+            "enum": [
+              "text",
+              "value",
+              "checked",
+              "disabled",
+              "visible",
+              "attribute"
+            ]
+          },
+          "attribute": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "property"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "observe"
+    },
+    {
+      "name": "browser_exists",
+      "description": "Check whether any matching element exists in the current DOM.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "observe"
+    },
+    {
+      "name": "browser_count",
+      "description": "Count elements matching a locator.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "observe"
+    },
+    {
+      "name": "browser_check",
+      "description": "Check one checkbox or radio control.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "interact"
+    },
+    {
+      "name": "browser_uncheck",
+      "description": "Uncheck one checkbox or radio control.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "interact"
+    },
+    {
+      "name": "browser_upload",
+      "description": "Attach a project file to a file input in the current Frappe page. The file must be inside the project root.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "target",
+          "path"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "interact"
+    },
+    {
+      "name": "browser_download",
+      "description": "Click a download control, wait for its file, and save the artifact in the private MCP state directory.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "object",
+            "properties": {
+              "by": {
+                "type": "string",
+                "enum": [
+                  "css",
+                  "role",
+                  "label",
+                  "text",
+                  "placeholder"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "value"
+            ]
+          },
+          "timeout_ms": {
+            "default": 10000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 30000
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "interact"
+    },
+    {
+      "name": "browser_downloads",
+      "description": "List files captured by browser_download in this server session.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "observe"
+    },
+    {
+      "name": "browser_wait_url",
+      "description": "Wait until the current tab URL contains a given path or text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "contains": {
+            "type": "string",
+            "minLength": 1
+          },
+          "timeout_ms": {
+            "default": 10000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 30000
+          }
+        },
+        "required": [
+          "contains"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "observe"
+    },
+    {
+      "name": "browser_wait_idle",
+      "description": "Wait for network quiet after a Frappe action; long polling may cause a timeout.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "timeout_ms": {
+            "default": 10000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 30000
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "observe"
+    },
+    {
+      "name": "browser_console",
+      "description": "Read recent browser console messages from the bounded diagnostic buffer.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "default": "all",
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "all"
+            ]
+          },
+          "since": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "limit": {
+            "default": 30,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "diagnose"
+    },
+    {
+      "name": "browser_errors",
+      "description": "Read page exceptions, failed requests, HTTP errors, and console errors.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "since": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "limit": {
+            "default": 30,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "diagnose"
+    },
+    {
+      "name": "browser_network",
+      "description": "List recent requests and responses with methods, status, URLs, and IDs. Bodies are in browser_request.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "since": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "PATCH",
+              "DELETE"
+            ]
+          },
+          "status": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 599
+          },
+          "contains": {
+            "type": "string"
+          },
+          "limit": {
+            "default": 30,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "diagnose"
+    },
+    {
+      "name": "browser_request",
+      "description": "Inspect one captured request or response by diagnostic ID, including a redacted body when available.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "browser",
+      "phase": "diagnose"
+    },
+    {
+      "name": "frappe_route",
+      "description": "Read Frappe's current client route, page title, and active form/list DocType.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe",
+      "phase": "observe"
+    },
+    {
+      "name": "frappe_form",
+      "description": "Read the active Frappe form's DocType, name, dirty state, scalar fields, and child table counts.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "max_fields": {
+            "default": 120,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 300
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe",
+      "phase": "observe"
+    },
+    {
+      "name": "frappe_field",
+      "description": "Read one field from the active Frappe form, including its type, label, value, and control state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fieldname": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "fieldname"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe",
+      "phase": "observe"
+    },
+    {
+      "name": "frappe_grid",
+      "description": "Read rows and field names from a child table in the active Frappe form.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fieldname": {
+            "type": "string",
+            "minLength": 1
+          },
+          "limit": {
+            "default": 20,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "fieldname"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe",
+      "phase": "observe"
+    },
+    {
+      "name": "frappe_dialog",
+      "description": "Inspect visible Frappe modal dialogs and their titles, text, and buttons.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe",
+      "phase": "observe"
+    },
+    {
+      "name": "frappe_list",
+      "description": "Read the active Frappe list DocType, visible row count, and visible row text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "default": 20,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe",
+      "phase": "observe"
+    }
+  ]
+}

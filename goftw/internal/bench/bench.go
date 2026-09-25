@@ -18,6 +18,7 @@ type Bench struct {
 	Path       string            `json:"path"`
 	Branch     string            `json:"branch"`
 	AppRefs    map[string]string `json:"app_refs"`
+	AppSources map[string]string `json:"app_sources"`
 	ServerName string            `json:"server_name"`
 }
 

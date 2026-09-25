@@ -4,7 +4,7 @@
   "instance_sites": [
     {
       "site_name": "home.localhost",
-      "apps": ["frappe", "erpnext"]
+      "apps": ["frappe", "erpnext", "hrms", "hrtmpay"]
     }
   ],
   "drop_abandoned_sites": false,
@@ -12,6 +12,12 @@
   "frappe_bench": "frappe-v16-bench",
   "frappe_branch": "v16.35.0",
   "app_refs": {
-    "erpnext": "v16.36.0"
+    "erpnext": "v16.36.0",
+    "hrms": "version-16",
+    "hrtmpay": "main"
+  },
+  "app_sources": {
+    "hrms": "https://github.com/frappe/hrms.git",
+    "hrtmpay": "/home/frappe/hrtmpay-main"
   }
 }
