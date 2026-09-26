@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "frappe-browser": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/mcp/dist/server.js"]
+    }
+  }
+}
