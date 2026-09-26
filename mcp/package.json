@@ -8,6 +8,7 @@
     "start": "node dist/server.js",
     "catalog": "node dist/export-catalog.js",
     "catalog:check": "node dist/export-catalog.js --check",
+    "watch:tools": "node dist/watch-tool-usage.js",
     "smoke": "node tests/smoke.mjs"
   },
   "dependencies": {
