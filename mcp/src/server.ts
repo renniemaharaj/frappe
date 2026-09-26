@@ -7,6 +7,7 @@ import { registerBrowserExtras } from "./browser-extras.js";
 import { registerFrappeTools } from "./frappe-tools.js";
 import { registerFrappeApiTools } from "./frappe-api-tools.js";
 import { instrumentToolUsage } from "./tool-usage.js";
+import { registerToolUsageOverview } from "./tool-usage-tool.js";
 
 const session = new BrowserSession(await loadConfig());
 const server = new McpServer(
@@ -14,11 +15,12 @@ const server = new McpServer(
   { instructions: "Call browser_status, then browser_login if needed. Use browser_snapshot or browser_screenshot to inspect the live Frappe UI before interacting. All navigation stays on the configured site. Browser state is saved locally; do not enter secrets in generic fill tools." },
 );
 
-instrumentToolUsage(server);
+instrumentToolUsage(server, session.config.password ? [session.config.password] : []);
 registerBrowserTools(server, session);
 registerBrowserExtras(server, session);
 registerFrappeTools(server, session);
 registerFrappeApiTools(server, session.config);
+registerToolUsageOverview(server);
 await server.connect(new StdioServerTransport());
 
 process.on("SIGINT", () => { void session.close().finally(() => process.exit(0)); });

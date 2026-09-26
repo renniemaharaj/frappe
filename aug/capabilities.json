@@ -6,12 +6,14 @@
   "guides": {
     "setup": "aug/README.md",
     "browser": "aug/browser.md",
+    "observability": "aug/observability.md",
     "frappe_ui": "aug/frappe-ui.md",
     "frappe_api": "aug/frappe-api.md",
     "payroll": "aug/payroll.md"
   },
   "features": {
     "browser": "aug/browser.json",
+    "observability": "aug/observability.json",
     "frappe_ui": "aug/frappe-ui.json",
     "frappe_api": "aug/frappe-api.json"
   },

@@ -6,7 +6,7 @@
     {
       "name": "browser_status",
       "title": "Browser status",
-      "description": "Check the configured Frappe site, current page, and logged-in user.",
+      "description": "Check the configured Frappe site, current page, and logged-in user.\n\nEstimated model token impact: about 120 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -25,7 +25,7 @@
     {
       "name": "browser_login",
       "title": "Log in to Frappe",
-      "description": "Log into the configured Frappe site using credentials from the local environment; persist the browser session.",
+      "description": "Log into the configured Frappe site using credentials from the local environment; persist the browser session.\n\nEstimated model token impact: about 250 tokens per typical call; relative score 3 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -44,7 +44,7 @@
     {
       "name": "browser_open",
       "title": "Open Frappe page",
-      "description": "Navigate the current browser tab to a path on the configured Frappe site.",
+      "description": "Navigate the current browser tab to a path on the configured Frappe site.\n\nEstimated model token impact: about 180 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -71,7 +71,7 @@
     {
       "name": "browser_snapshot",
       "title": "Inspect Frappe page",
-      "description": "Return a compact accessibility snapshot of the current Frappe page for locating controls.",
+      "description": "Return a compact accessibility snapshot of the current Frappe page for locating controls.\n\nEstimated model token impact: about 4500 tokens per typical call; relative score 45 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -97,7 +97,7 @@
     {
       "name": "browser_screenshot",
       "title": "Screenshot Frappe page",
-      "description": "Capture the current browser tab as a PNG image.",
+      "description": "Capture the current browser tab as a PNG image.\n\nEstimated model token impact: about 1200 tokens per typical call; relative score 12 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -121,7 +121,7 @@
     {
       "name": "browser_click",
       "title": "Click Frappe control",
-      "description": "Click one visible control selected by role, label, text, placeholder, or CSS.",
+      "description": "Click one visible control selected by role, label, text, placeholder, or CSS.\n\nEstimated model token impact: about 160 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -170,7 +170,7 @@
     {
       "name": "browser_fill",
       "title": "Fill Frappe field",
-      "description": "Fill one text field; the returned result does not echo its value.",
+      "description": "Fill one text field; the returned result does not echo its value.\n\nEstimated model token impact: about 160 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -223,7 +223,7 @@
     {
       "name": "browser_select",
       "title": "Select Frappe option",
-      "description": "Choose an option in a native select field by its visible label or value.",
+      "description": "Choose an option in a native select field by its visible label or value.\n\nEstimated model token impact: about 160 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -284,7 +284,7 @@
     {
       "name": "browser_press",
       "title": "Press key in Frappe",
-      "description": "Press a key or key chord in one focused control, such as Enter or ControlOrMeta+A.",
+      "description": "Press a key or key chord in one focused control, such as Enter or ControlOrMeta+A.\n\nEstimated model token impact: about 160 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -338,7 +338,7 @@
     {
       "name": "browser_wait",
       "title": "Wait for Frappe UI",
-      "description": "Wait until a selected control is visible after a page or form action.",
+      "description": "Wait until a selected control is visible after a page or form action.\n\nEstimated model token impact: about 200 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -404,7 +404,7 @@
     },
     {
       "name": "browser_back",
-      "description": "Go back in the current Frappe tab.",
+      "description": "Go back in the current Frappe tab.\n\nEstimated model token impact: about 180 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -422,7 +422,7 @@
     },
     {
       "name": "browser_reload",
-      "description": "Reload the current Frappe tab.",
+      "description": "Reload the current Frappe tab.\n\nEstimated model token impact: about 200 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -440,7 +440,7 @@
     },
     {
       "name": "browser_get",
-      "description": "Read text, input value, checked/disabled/visible state, or an attribute from one element.",
+      "description": "Read text, input value, checked/disabled/visible state, or an attribute from one element.\n\nEstimated model token impact: about 250 tokens per typical call; relative score 3 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -503,7 +503,7 @@
     },
     {
       "name": "browser_exists",
-      "description": "Check whether any matching element exists in the current DOM.",
+      "description": "Check whether any matching element exists in the current DOM.\n\nEstimated model token impact: about 100 tokens per typical call; relative score 1 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -551,7 +551,7 @@
     },
     {
       "name": "browser_count",
-      "description": "Count elements matching a locator.",
+      "description": "Count elements matching a locator.\n\nEstimated model token impact: about 100 tokens per typical call; relative score 1 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -599,7 +599,7 @@
     },
     {
       "name": "browser_check",
-      "description": "Check one checkbox or radio control.",
+      "description": "Check one checkbox or radio control.\n\nEstimated model token impact: about 160 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -647,7 +647,7 @@
     },
     {
       "name": "browser_uncheck",
-      "description": "Uncheck one checkbox or radio control.",
+      "description": "Uncheck one checkbox or radio control.\n\nEstimated model token impact: about 160 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -695,7 +695,7 @@
     },
     {
       "name": "browser_upload",
-      "description": "Attach a project file to a file input in the current Frappe page. The file must be inside the project root.",
+      "description": "Attach a project file to a file input in the current Frappe page. The file must be inside the project root.\n\nEstimated model token impact: about 250 tokens per typical call; relative score 3 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -748,7 +748,7 @@
     },
     {
       "name": "browser_download",
-      "description": "Click a download control, wait for its file, and save the artifact in the private MCP state directory.",
+      "description": "Click a download control, wait for its file, and save the artifact in the private MCP state directory.\n\nEstimated model token impact: about 250 tokens per typical call; relative score 3 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -802,7 +802,7 @@
     },
     {
       "name": "browser_downloads",
-      "description": "List files captured by browser_download in this server session.",
+      "description": "List files captured by browser_download in this server session.\n\nEstimated model token impact: about 150 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -820,7 +820,7 @@
     },
     {
       "name": "browser_wait_url",
-      "description": "Wait until the current tab URL contains a given path or text.",
+      "description": "Wait until the current tab URL contains a given path or text.\n\nEstimated model token impact: about 200 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -852,7 +852,7 @@
     },
     {
       "name": "browser_wait_idle",
-      "description": "Wait for network quiet after a Frappe action; long polling may cause a timeout.",
+      "description": "Wait for network quiet after a Frappe action; long polling may cause a timeout.\n\nEstimated model token impact: about 250 tokens per typical call; relative score 3 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -877,7 +877,7 @@
     },
     {
       "name": "browser_console",
-      "description": "Read recent browser console messages from the bounded diagnostic buffer.",
+      "description": "Read recent browser console messages from the bounded diagnostic buffer.\n\nEstimated model token impact: about 1800 tokens per typical call; relative score 18 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -916,7 +916,7 @@
     },
     {
       "name": "browser_errors",
-      "description": "Read page exceptions, failed requests, HTTP errors, and console errors.",
+      "description": "Read page exceptions, failed requests, HTTP errors, and console errors.\n\nEstimated model token impact: about 3500 tokens per typical call; relative score 35 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -946,7 +946,7 @@
     },
     {
       "name": "browser_network",
-      "description": "List recent requests and responses with methods, status, URLs, and IDs. Bodies are in browser_request.",
+      "description": "List recent requests and responses with methods, status, URLs, and IDs. Bodies are in browser_request.\n\nEstimated model token impact: about 5000 tokens per typical call; relative score 50 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -994,7 +994,7 @@
     },
     {
       "name": "browser_request",
-      "description": "Inspect one captured request or response by diagnostic ID, including a redacted body when available.",
+      "description": "Inspect one captured request or response by diagnostic ID, including a redacted body when available.\n\nEstimated model token impact: about 7000 tokens per typical call; relative score 70 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1021,7 +1021,7 @@
     },
     {
       "name": "frappe_route",
-      "description": "Read Frappe's current client route, page title, and active form/list DocType.",
+      "description": "Read Frappe's current client route, page title, and active form/list DocType.\n\nEstimated model token impact: about 120 tokens per typical call; relative score 2 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -1039,7 +1039,7 @@
     },
     {
       "name": "frappe_form",
-      "description": "Read the active Frappe form's DocType, name, dirty state, scalar fields, and child table counts.",
+      "description": "Read the active Frappe form's DocType, name, dirty state, scalar fields, and child table counts.\n\nEstimated model token impact: about 1500 tokens per typical call; relative score 15 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1064,7 +1064,7 @@
     },
     {
       "name": "frappe_field",
-      "description": "Read one field from the active Frappe form, including its type, label, value, and control state.",
+      "description": "Read one field from the active Frappe form, including its type, label, value, and control state.\n\nEstimated model token impact: about 400 tokens per typical call; relative score 4 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1090,7 +1090,7 @@
     },
     {
       "name": "frappe_grid",
-      "description": "Read rows and field names from a child table in the active Frappe form.",
+      "description": "Read rows and field names from a child table in the active Frappe form.\n\nEstimated model token impact: about 3000 tokens per typical call; relative score 30 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1122,7 +1122,7 @@
     },
     {
       "name": "frappe_dialog",
-      "description": "Inspect visible Frappe modal dialogs and their titles, text, and buttons.",
+      "description": "Inspect visible Frappe modal dialogs and their titles, text, and buttons.\n\nEstimated model token impact: about 700 tokens per typical call; relative score 7 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -1140,7 +1140,7 @@
     },
     {
       "name": "frappe_list",
-      "description": "Read the active Frappe list DocType, visible row count, and visible row text.",
+      "description": "Read the active Frappe list DocType, visible row count, and visible row text.\n\nEstimated model token impact: about 4500 tokens per typical call; relative score 45 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1166,7 +1166,7 @@
     {
       "name": "frappe_get_list",
       "title": "Frappe: list documents",
-      "description": "Return a list of documents for a given DocType. Supports filtering, field selection, ordering, and pagination.",
+      "description": "Return a list of documents for a given DocType. Supports filtering, field selection, ordering, and pagination.\n\nEstimated model token impact: about 5000 tokens per typical call; relative score 50 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1236,7 +1236,7 @@
     {
       "name": "frappe_get_doc",
       "title": "Frappe: get document",
-      "description": "Fetch a single Frappe document by DocType and name, including all child tables.",
+      "description": "Fetch a single Frappe document by DocType and name, including all child tables.\n\nEstimated model token impact: about 7000 tokens per typical call; relative score 70 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1268,7 +1268,7 @@
     {
       "name": "frappe_save_doc",
       "title": "Frappe: save (insert or update) document",
-      "description": "Insert a new document or update an existing one. Omit 'name' to insert; include 'name' to update. The doc object must contain 'doctype'. Returns the saved document.",
+      "description": "Insert a new document or update an existing one. Omit 'name' to insert; include 'name' to update. The doc object must contain 'doctype'. Returns the saved document.\n\nEstimated model token impact: about 5000 tokens per typical call; relative score 50 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1299,7 +1299,7 @@
     {
       "name": "frappe_submit_doc",
       "title": "Frappe: submit document",
-      "description": "Submit a saved Frappe document (docstatus 0 → 1). Document must exist in Draft state.",
+      "description": "Submit a saved Frappe document (docstatus 0 → 1). Document must exist in Draft state.\n\nEstimated model token impact: about 5000 tokens per typical call; relative score 50 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1331,7 +1331,7 @@
     {
       "name": "frappe_cancel_doc",
       "title": "Frappe: cancel document",
-      "description": "Cancel a submitted Frappe document (docstatus 1 → 2). Returns cancelled: false if the document is not in Submitted state.",
+      "description": "Cancel a submitted Frappe document (docstatus 1 → 2). Returns cancelled: false if the document is not in Submitted state.\n\nEstimated model token impact: about 5000 tokens per typical call; relative score 50 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1363,7 +1363,7 @@
     {
       "name": "frappe_call",
       "title": "Frappe: call whitelisted method",
-      "description": "Call any Frappe whitelisted server-side method (frappe.client.*, custom app methods, etc.). Pass 'method' as the dotted Python path and optional 'args' as a key/value object.",
+      "description": "Call any Frappe whitelisted server-side method (frappe.client.*, custom app methods, etc.). Pass 'method' as the dotted Python path and optional 'args' as a key/value object.\n\nEstimated model token impact: about 5000 tokens per typical call; relative score 50 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1395,6 +1395,40 @@
       },
       "feature": "frappe_api",
       "phase": "interact"
+    },
+    {
+      "name": "tool_usage_overview",
+      "title": "Tool usage overview",
+      "description": "Summarize recent MCP tool usage, success/failure outcomes, active calls, recent failures, most-used tools, and estimated model token impact. Per-tool estimates and observed payload token approximations are intended to help keep model context use lean.\n\nEstimated model token impact: about 1500 tokens per typical call; relative score 15 (1 is cheapest). This is a rough argument and result size estimate. Large outputs and images can cost more. Tool-definition overhead is not included.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "hours": {
+            "description": "Look back this many hours; maximum 720 (30 days).",
+            "default": 24,
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 720
+          },
+          "recent_failures": {
+            "description": "Maximum recent failures to include.",
+            "default": 10,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 50
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "observability",
+      "phase": "observe"
     }
   ]
 }

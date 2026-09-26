@@ -1,0 +1,12 @@
+{
+  "feature": "observability",
+  "guide": "aug/observability.md",
+  "tools": [
+    "tool_usage_overview"
+  ],
+  "healthy_signals": [
+    "tool_usage_overview.totals.failed is 0",
+    "tool_usage_overview.totals.active is 0"
+  ],
+  "restart_requirement": "Restart the MCP client connection when server tools change."
+}

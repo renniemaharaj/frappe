@@ -1,44 +1,70 @@
 import { readFile } from "node:fs/promises";
 import { setTimeout as delay } from "node:timers/promises";
-import { toolUsageLogPath } from "./tool-usage.js";
+import { tokenCostScore, toolUsageLogPath } from "./tool-usage.js";
 
 interface Event {
   id: string;
   event: "started" | "succeeded" | "failed";
   tool: string;
   timestamp: string;
+  token_cost_score?: number;
+  estimated_model_tokens?: number;
   duration_ms?: number;
 }
 
 interface Summary {
   calls: number;
+  totalTokenCostScore: number;
   succeeded: number;
   failed: number;
   active: Set<string>;
+  estimatedTokens: number;
+  measuredCalls: number;
   lastUsed: string;
 }
 
 function display(events: Event[], logPath: string): void {
-  const summaries = new Map<string, Summary>();
+  const calls = new Map<string, { tool: string; id: string; status: "active" | "succeeded" | "failed"; costScore: number; estimatedTokens?: number }>();
   for (const event of events) {
-    let summary = summaries.get(event.tool);
-    if (!summary) {
-      summary = { calls: 0, succeeded: 0, failed: 0, active: new Set(), lastUsed: event.timestamp };
-      summaries.set(event.tool, summary);
-    }
     if (event.event === "started") {
-      summary.calls++;
-      summary.active.add(event.id);
-      summary.lastUsed = event.timestamp;
+      calls.set(event.id, { tool: event.tool, id: event.id, status: "active",
+        costScore: event.token_cost_score ?? tokenCostScore(event.tool) });
     } else {
-      summary.active.delete(event.id);
-      if (event.event === "succeeded") summary.succeeded++;
-      else summary.failed++;
+      const call = calls.get(event.id);
+      if (call) {
+        call.status = event.event;
+        call.estimatedTokens = event.estimated_model_tokens;
+      }
     }
   }
 
-  const rows = [...summaries.entries()].sort((a, b) => b[1].calls - a[1].calls || a[0].localeCompare(b[0]));
-  const max = Math.max(1, ...rows.map(([, summary]) => summary.calls));
+  const summaries = new Map<string, Summary>();
+  for (const call of calls.values()) {
+    let summary = summaries.get(call.tool);
+    if (!summary) {
+      summary = { calls: 0, totalTokenCostScore: 0, succeeded: 0, failed: 0, active: new Set(), estimatedTokens: 0, measuredCalls: 0, lastUsed: "" };
+      summaries.set(call.tool, summary);
+    }
+    summary.calls++;
+    summary.totalTokenCostScore += call.costScore;
+    if (call.status === "active") summary.active.add(call.id);
+    else if (call.status === "succeeded") summary.succeeded++;
+    else summary.failed++;
+    if (call.estimatedTokens !== undefined) {
+      summary.estimatedTokens += call.estimatedTokens;
+      summary.measuredCalls++;
+    }
+  }
+  for (const event of events) {
+    if (event.event === "started") {
+      const summary = summaries.get(event.tool);
+      if (summary && (!summary.lastUsed || event.timestamp > summary.lastUsed)) summary.lastUsed = event.timestamp;
+    }
+  }
+
+  const rows = [...summaries.entries()].sort((a, b) =>
+    b[1].totalTokenCostScore - a[1].totalTokenCostScore || b[1].calls - a[1].calls || a[0].localeCompare(b[0]));
+  const max = Math.max(1, ...rows.map(([, summary]) => summary.totalTokenCostScore));
   const barWidth = 24;
   const cell = (value: string, width: number) => value.length > width ? value.slice(0, width) : value.padEnd(width);
 
@@ -49,12 +75,13 @@ function display(events: Event[], logPath: string): void {
     console.log("No tool calls recorded yet. Start the MCP server and invoke a tool.");
     return;
   }
-  console.log(`${cell("TOOL", 26)} ${cell("CALLS", 7)} ${cell("ACTIVE", 7)} ${cell("OK", 6)} ${cell("FAIL", 6)} ${cell("LAST USED", 12)} USAGE`);
-  console.log("─".repeat(92));
+  console.log(`${cell("TOOL", 26)} ${cell("COST SCORE", 11)} ${cell("CALLS", 6)} ${cell("ACTIVE", 6)} ${cell("OK", 5)} ${cell("FAIL", 5)} ${cell("AVG TOKENS", 10)} ${cell("LAST USED", 11)} USAGE`);
+  console.log("─".repeat(100));
   for (const [name, summary] of rows) {
-    const bars = Math.max(1, Math.round(summary.calls / max * barWidth));
+    const bars = Math.max(1, Math.round(summary.totalTokenCostScore / max * barWidth));
     const lastUsed = new Date(summary.lastUsed).toLocaleTimeString();
-    console.log(`${cell(name, 26)} ${cell(String(summary.calls), 7)} ${cell(String(summary.active.size), 7)} ${cell(String(summary.succeeded), 6)} ${cell(String(summary.failed), 6)} ${cell(lastUsed, 12)} ${"█".repeat(bars)}`);
+    const average = summary.measuredCalls ? String(Math.round(summary.estimatedTokens / summary.measuredCalls)) : "—";
+    console.log(`${cell(name, 26)} ${cell(String(summary.totalTokenCostScore), 11)} ${cell(String(summary.calls), 6)} ${cell(String(summary.active.size), 6)} ${cell(String(summary.succeeded), 5)} ${cell(String(summary.failed), 5)} ${cell(average, 10)} ${cell(lastUsed, 11)} ${"█".repeat(bars)}`);
   }
 }
 
