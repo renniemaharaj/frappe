@@ -132,7 +132,7 @@ frappe:
 
 ### Browser automation
 
-The Playwright MCP server in [mcp/](mcp/) can log into `home.localhost`, operate form controls, inspect Frappe forms and child tables, capture downloads, and diagnose browser/network failures. Its live tool catalog and workflow guides are under [augmented/](augmented/). Build it with `cd mcp && npm ci && npm run build`; VS Code loads `.vscode/mcp.json`, and `.codex/config.toml` configures Codex. Start or restart the MCP connection after building. Run `npm run smoke` in `mcp/` to verify login, Salary Slip list inspection, and Employee form inspection.
+The Playwright MCP server in [mcp/](mcp/) can log into `home.localhost`, operate form controls, inspect Frappe forms and child tables, capture downloads, and diagnose browser/network failures. Its live tool catalog and workflow guides are under [aug/](aug/). Build it with `cd mcp && npm ci && npm run build`; VS Code loads `.vscode/mcp.json`, and `.codex/config.toml` configures Codex. Start or restart the MCP connection after building. Run `npm run smoke` in `mcp/` to verify login, Salary Slip list inspection, and Employee form inspection.
 
 1. **Build and start containers:**
 

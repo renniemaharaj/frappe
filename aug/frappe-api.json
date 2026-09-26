@@ -1,0 +1,18 @@
+{
+  "feature": "frappe_api",
+  "guide": "aug/frappe-api.md",
+  "tools": [
+    "frappe_get_list",
+    "frappe_get_doc",
+    "frappe_save_doc",
+    "frappe_submit_doc",
+    "frappe_cancel_doc",
+    "frappe_call"
+  ],
+  "healthy_signals": [
+    "frappe_get_list with doctype='Employee' returns a non-empty list",
+    "frappe_get_doc with a known doctype/name returns the document fields",
+    "frappe_call with method='frappe.client.get_count' and args={\"doctype\":\"Employee\"} returns a number"
+  ],
+  "restart_requirement": "Restart the MCP client connection when server tools change."
+}

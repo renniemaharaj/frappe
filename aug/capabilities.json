@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "project": "frappe",
+  "mcp_server": "mcp/dist/server.js",
+  "tool_catalog": "aug/tools.json",
+  "guides": {
+    "setup": "aug/README.md",
+    "browser": "aug/browser.md",
+    "frappe_ui": "aug/frappe-ui.md",
+    "frappe_api": "aug/frappe-api.md",
+    "payroll": "aug/payroll.md"
+  },
+  "features": {
+    "browser": "aug/browser.json",
+    "frappe_ui": "aug/frappe-ui.json",
+    "frappe_api": "aug/frappe-api.json"
+  },
+  "knowledge_root": "aug/frappe"
+}

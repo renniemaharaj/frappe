@@ -13,7 +13,7 @@ mcp/
   src/browser-extras.ts        # Browser inspection, files, diagnostics
   src/frappe-tools.ts          # Frappe form/list/child-table inspection
   control/                     # Future separate Compose/goftw server
-augmented/                     # Catalog, workflows, and future Frappe reference data
+aug/                     # Catalog, workflows, and future Frappe reference data
 ```
 
 Run `control` on the Docker host with access to this repository and the local Docker CLI; it calls goftw over HTTP. Run the browser server as its own MCP process with Playwright and site credentials. Both use local stdio transport. Neither server needs the Docker socket inside a container.
@@ -31,7 +31,7 @@ Use Playwright against an allowlist of project site URLs. Provide `site_open`, `
 
 ## Augmented data
 
-Publish MCP resources for the project layout, `instance.json` schema, current instance/site/app status, DocType field and link metadata, and concise integration recipes in `augmented/`. Generate live resources from goftw/Frappe; keep curated notes versioned with the repo. Include source, site, app version, and retrieval time so an agent can distinguish current facts from guidance. Never index passwords, tokens, or full site configs as resources.
+Publish MCP resources for the project layout, `instance.json` schema, current instance/site/app status, DocType field and link metadata, and concise integration recipes in `aug/`. Generate live resources from goftw/Frappe; keep curated notes versioned with the repo. Include source, site, app version, and retrieval time so an agent can distinguish current facts from guidance. Never index passwords, tokens, or full site configs as resources.
 
 ## Delivery order and checks
 

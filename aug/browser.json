@@ -1,6 +1,6 @@
 {
   "feature": "browser",
-  "guide": "augmented/browser.md",
+  "guide": "aug/browser.md",
   "tools": [
     "browser_status",
     "browser_login",

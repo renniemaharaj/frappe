@@ -1,6 +1,6 @@
 {
   "feature": "frappe_ui",
-  "guide": "augmented/frappe-ui.md",
+  "guide": "aug/frappe-ui.md",
   "tools": [
     "frappe_route",
     "frappe_form",

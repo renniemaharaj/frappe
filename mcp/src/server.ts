@@ -5,6 +5,7 @@ import { loadConfig } from "./config.js";
 import { registerBrowserTools } from "./tools.js";
 import { registerBrowserExtras } from "./browser-extras.js";
 import { registerFrappeTools } from "./frappe-tools.js";
+import { registerFrappeApiTools } from "./frappe-api-tools.js";
 
 const session = new BrowserSession(await loadConfig());
 const server = new McpServer(
@@ -15,6 +16,7 @@ const server = new McpServer(
 registerBrowserTools(server, session);
 registerBrowserExtras(server, session);
 registerFrappeTools(server, session);
+registerFrappeApiTools(server, session.config);
 await server.connect(new StdioServerTransport());
 
 process.on("SIGINT", () => { void session.close().finally(() => process.exit(0)); });

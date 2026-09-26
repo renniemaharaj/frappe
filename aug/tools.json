@@ -1034,7 +1034,7 @@
       "execution": {
         "taskSupport": "forbidden"
       },
-      "feature": "frappe",
+      "feature": "frappe_ui",
       "phase": "observe"
     },
     {
@@ -1059,7 +1059,7 @@
       "execution": {
         "taskSupport": "forbidden"
       },
-      "feature": "frappe",
+      "feature": "frappe_ui",
       "phase": "observe"
     },
     {
@@ -1085,7 +1085,7 @@
       "execution": {
         "taskSupport": "forbidden"
       },
-      "feature": "frappe",
+      "feature": "frappe_ui",
       "phase": "observe"
     },
     {
@@ -1117,7 +1117,7 @@
       "execution": {
         "taskSupport": "forbidden"
       },
-      "feature": "frappe",
+      "feature": "frappe_ui",
       "phase": "observe"
     },
     {
@@ -1135,7 +1135,7 @@
       "execution": {
         "taskSupport": "forbidden"
       },
-      "feature": "frappe",
+      "feature": "frappe_ui",
       "phase": "observe"
     },
     {
@@ -1160,8 +1160,241 @@
       "execution": {
         "taskSupport": "forbidden"
       },
-      "feature": "frappe",
+      "feature": "frappe_ui",
       "phase": "observe"
+    },
+    {
+      "name": "frappe_get_list",
+      "title": "Frappe: list documents",
+      "description": "Return a list of documents for a given DocType. Supports filtering, field selection, ordering, and pagination.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "doctype": {
+            "description": "e.g. 'Salary Structure'",
+            "type": "string",
+            "minLength": 1
+          },
+          "fields": {
+            "description": "Fields to return, default ['name']",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "filters": {
+            "description": "Array of [field, operator, value] filter tuples",
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "order_by": {
+            "description": "e.g. 'creation desc'",
+            "type": "string"
+          },
+          "limit": {
+            "default": 100,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "start": {
+            "description": "Pagination offset",
+            "default": 0,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "doctype"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe_api",
+      "phase": "observe"
+    },
+    {
+      "name": "frappe_get_doc",
+      "title": "Frappe: get document",
+      "description": "Fetch a single Frappe document by DocType and name, including all child tables.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "doctype": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "doctype",
+          "name"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe_api",
+      "phase": "observe"
+    },
+    {
+      "name": "frappe_save_doc",
+      "title": "Frappe: save (insert or update) document",
+      "description": "Insert a new document or update an existing one. Omit 'name' to insert; include 'name' to update. The doc object must contain 'doctype'. Returns the saved document.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "doc": {
+            "description": "Document object with at least 'doctype' and 'name' (for update)",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "doc"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe_api",
+      "phase": "interact"
+    },
+    {
+      "name": "frappe_submit_doc",
+      "title": "Frappe: submit document",
+      "description": "Submit a saved Frappe document (docstatus 0 → 1). Document must exist in Draft state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "doctype": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "doctype",
+          "name"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe_api",
+      "phase": "interact"
+    },
+    {
+      "name": "frappe_cancel_doc",
+      "title": "Frappe: cancel document",
+      "description": "Cancel a submitted Frappe document (docstatus 1 → 2). Returns cancelled: false if the document is not in Submitted state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "doctype": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "doctype",
+          "name"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe_api",
+      "phase": "interact"
+    },
+    {
+      "name": "frappe_call",
+      "title": "Frappe: call whitelisted method",
+      "description": "Call any Frappe whitelisted server-side method (frappe.client.*, custom app methods, etc.). Pass 'method' as the dotted Python path and optional 'args' as a key/value object.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "description": "Dotted method path, e.g. 'frappe.client.get_value'",
+            "type": "string",
+            "minLength": 1
+          },
+          "args": {
+            "description": "Keyword arguments to pass to the method",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "method"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "feature": "frappe_api",
+      "phase": "interact"
     }
   ]
 }

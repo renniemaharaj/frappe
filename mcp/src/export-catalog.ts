@@ -7,9 +7,10 @@ import { projectRoot } from "./config.js";
 import { toolPhases } from "./tools.js";
 import { extraPhases } from "./browser-extras.js";
 import { frappePhases } from "./frappe-tools.js";
+import { frappeApiPhases } from "./frappe-api-tools.js";
 
 const mcpRoot = path.resolve(fileURLToPath(new URL("../", import.meta.url)));
-const target = path.join(projectRoot, "augmented/tools.json");
+const target = path.join(projectRoot, "aug/tools.json");
 const client = new Client({ name: "frappe-catalog-export", version: "0.1.0" });
 const transport = new StdioClientTransport({
   command: process.execPath,
@@ -21,12 +22,12 @@ try {
   await client.connect(transport);
   const { tools } = await client.listTools();
   const names = new Set(tools.map(tool => tool.name));
-  const phases = { ...toolPhases, ...extraPhases, ...frappePhases };
+  const phases = { ...toolPhases, ...extraPhases, ...frappePhases, ...frappeApiPhases };
   const mapped = new Set(Object.keys(phases));
   if (names.size !== mapped.size || [...names].some(name => !mapped.has(name))) {
     throw new Error("Tool phase map differs from MCP tools/list");
   }
-  const capabilities = JSON.parse(await readFile(path.join(projectRoot, "augmented/capabilities.json"), "utf8")) as { features: Record<string, string> };
+  const capabilities = JSON.parse(await readFile(path.join(projectRoot, "aug/capabilities.json"), "utf8")) as { features: Record<string, string> };
   const manifestNames = new Set<string>();
   for (const manifestPath of Object.values(capabilities.features)) {
     const feature = JSON.parse(await readFile(path.join(projectRoot, manifestPath), "utf8")) as { tools: string[] };
@@ -44,7 +45,7 @@ try {
     server: "mcp/dist/server.js",
     tools: tools.map(tool => ({
       ...tool,
-      feature: tool.name.startsWith("frappe_") ? "frappe" : "browser",
+      feature: tool.name in frappeApiPhases ? "frappe_api" : tool.name.startsWith("frappe_") ? "frappe_ui" : "browser",
       phase: phases[tool.name as keyof typeof phases],
     })),
   };
