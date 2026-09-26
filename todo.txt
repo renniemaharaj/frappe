@@ -1,0 +1,1 @@
+- [ ] Support class overrides for Frappe Income Tax Slab/Tax Slab doctypes, and reconcile them with HRTMPay's Salary Slip class override so tax-slab calculations and custom PAYE deductions work together.
