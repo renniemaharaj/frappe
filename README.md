@@ -74,7 +74,7 @@ The entrypoint (Go or shell) handles site management automatically:
     "frappe_bench": "frappe-v16-bench",
     "frappe_branch": "v16.35.0",
     "app_refs": {"erpnext": "v16.36.0", "hrms": "version-16", "hrtmpay": "main"},
-    "app_sources": {"hrms": "https://github.com/frappe/hrms.git", "hrtmpay": "/home/frappe/hrtmpay-main"}
+    "app_sources": {"hrms": "https://github.com/frappe/hrms.git", "hrtmpay": "/home/frappe/frappe-v16-bench/apps/hrtmpay"}
 }
 ```
 
@@ -84,8 +84,7 @@ The entrypoint (Go or shell) handles site management automatically:
 * `frappe_bench`: Bench directory under `/home/frappe`; use a new name for a fresh site.
 * `frappe_branch`: branch or tag used by `bench init` and as the default for `bench get-app`.
 * `app_refs`: optional app-specific branch or tag overrides for `bench get-app`.
-* `app_sources`: optional Git repository URLs or local checkout paths for apps outside the default Frappe organization. HrtmPay needs HRMS; list `hrms` before `hrtmpay` in `instance_sites[].apps`.
-  For a private HrtmPay repository, clone `main` on the host into `mount/hrtmpay-main`; the mounted `/home/frappe/hrtmpay-main` path lets `bench get-app` install it without putting Git credentials in the container.
+* `app_sources`: optional Git repository URLs or local checkout paths for apps outside the default Frappe organization. HrtmPay lives directly in `mount/frappe-v16-bench/apps/hrtmpay`; keep `hrms` before `hrtmpay` in `instance_sites[].apps`.
 
 ### Example `common_site_config.json` (repo root)
 
@@ -158,6 +157,10 @@ docker compose down
 ```
 
 ## Onboarding Guide
+
+### App development and maintenance
+
+The shared agent workflow for building and maintaining installed Frappe apps is documented in [aug/app-development-system.md](aug/app-development-system.md). Each app supplies domain-specific instructions using [aug/app-adapter-template.md](aug/app-adapter-template.md); the HrtmPay adapter is [mount/frappe-v16-bench/apps/hrtmpay/APP_MAINTENANCE.md](mount/frappe-v16-bench/apps/hrtmpay/APP_MAINTENANCE.md). The workflow uses the Frappe API and browser tools documented under [aug/](aug/) for isolated site-level testing.
 
 ### Prerequisites
 

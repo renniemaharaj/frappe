@@ -1,10 +1,14 @@
 .git
 .stashes
 .env
+
 mount
 mysqldata
 redis-cache
 redis-queue
 redis-socketio
+
+aug/runs/
+
 assets
 internal

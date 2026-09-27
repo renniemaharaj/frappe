@@ -4,3 +4,4 @@ mysqldata
 redis-cache
 redis-queue
 redis-socketio
+aug/runs/

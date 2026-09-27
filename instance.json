@@ -18,6 +18,6 @@
   },
   "app_sources": {
     "hrms": "https://github.com/frappe/hrms.git",
-    "hrtmpay": "/home/frappe/hrtmpay-main"
+    "hrtmpay": "/home/frappe/frappe-v16-bench/apps/hrtmpay"
   }
 }
